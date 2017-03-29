@@ -3,8 +3,10 @@
 class Level {
 	const Angine::Window* p_window = nullptr;
 	const Angine::Camera2D* p_camera = nullptr;
-	float xOffset;
-	float yOffset;
+
+	//For objects to spawn beginning from (0,0)
+	float xOffset; ///= screenWidth / 2 / cameraScale
+	float yOffset; ///= screenHeight / 2 / cameraScale
 
 	b2World* p_world = nullptr;
 	std::vector<std::string> p_levelData;
