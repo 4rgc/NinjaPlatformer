@@ -90,6 +90,9 @@ void Level::Init() {
 			}
 		}
 	}
+	CapsuleDef player(p_world, p_startPlayerPos, b2Vec2(1.0f, 2.0f), 1.0f, 0.1f);
+	player.drawDims = glm::vec2(2.0f);
+	p_player.Init(&player);
 
 }
 

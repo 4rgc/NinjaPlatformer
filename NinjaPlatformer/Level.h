@@ -12,6 +12,7 @@ class Level {
 	std::vector<std::string> p_levelData;
 	Angine::SpriteBatch* p_spriteBatch = nullptr;
 	b2Vec2 p_startPlayerPos;
+	Player p_player;
 	std::vector<Box> p_boxes;
 	Angine::TileSheet p_tileSheet;
 	Angine::TileSheet p_boxSheet;
@@ -29,6 +30,7 @@ public:
 	void MakeBoxGroup(b2Vec2& position, b2Vec2& dims);
 
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
+	const Player& GetPlayerP() const { return p_player; }
 
 	Level operator=(Level&& obj);
 	Level &operator=(const Level& obj);

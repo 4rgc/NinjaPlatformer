@@ -75,14 +75,12 @@ void GameplayScreen::OnEntry() {
 	p_MainCamera.Init(p_window->getScreenW(), p_window->getScreenH());
 	p_MainCamera.SetScale(48.0f);
 
+
+	//Init the level and player
 	p_curLvl = Level(p_world.get(), p_window, p_MainCamera);
 	p_curLvl.Load("empty.txt");
 	p_curLvl.Init();
-
-	//Init the player
-	CapsuleDef player(p_world.get(), p_curLvl.GetStartPlayerPos(), b2Vec2(1.0f, 2.0f), 1.0f, 0.1f);
-	player.drawDims = glm::vec2(2.0f);
-	p_player.Init(&player);
+	p_player = p_curLvl.GetPlayerP();
 
 	//Init the UI
 	InitUI();
@@ -168,12 +166,6 @@ void GameplayScreen::Draw() {
 	playerLight.color = Angine::ColorRGBA8(255, 255, 255, 30);
 	playerLight.position = p_player.GetPosition();
 	playerLight.size = 20.0f;
-	
-	/*Light mouseLight;
-	mouseLight.color = Angine::ColorRGBA8(255, 0, 255, 150);
-	mouseLight.position = b2Vec2(p_MainCamera.ConvertScreenToWorld(p_game->inputManager.GetMouseCoords()).x,
-								p_MainCamera.ConvertScreenToWorld(p_game->inputManager.GetMouseCoords()).y);
-	mouseLight.size = 15.0f;*/
 
 	p_lightProgram.Use();
 	pUniform = p_lightProgram.GetUniformLocation("transformationMatrix");

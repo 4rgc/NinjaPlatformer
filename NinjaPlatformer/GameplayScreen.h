@@ -13,7 +13,7 @@ class GameplayScreen : public Angine::IGameScreen {
 	Angine::Window* p_window;
 	Angine::GUI p_GUI;
 
-	Player p_player;
+	Player p_player; ///< const reference
 
 	Level p_curLvl;
 
