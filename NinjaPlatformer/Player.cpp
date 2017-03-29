@@ -8,10 +8,11 @@ Player::~Player() {
 	
 }
 
-void Player::Init(CapsuleDef* def) {
+void Player::Init(CapsuleDef* def, Level* thisLvl) {
 	Angine::GLTexture texture = Angine::ResourceManager::GetTexture("Textures/ninja/blue_ninja.png");
 	p_capsule.Init(def, true);
 	p_texture.Init(texture, glm::ivec2(10,2));
+	p_curLvl = thisLvl;
 }
 
 void Player::Draw(Angine::SpriteBatch& spriteBatch) {
@@ -125,6 +126,7 @@ void Player::Update(Angine::InputManager& inputManager) {
 	}
 	if (inputManager.IsKeyPressed(SDLK_LSHIFT)) {
 		p_isPunching = 1;
+		OnPunch();
 	}
 	if (body->GetLinearVelocity().x < -MAX_SPEED) {
 		body->SetLinearVelocity(b2Vec2(-MAX_SPEED, body->GetLinearVelocity().y));
@@ -162,6 +164,28 @@ void Player::Update(Angine::InputManager& inputManager) {
 		if (inputManager.IsKeyPressed(SDLK_SPACE)) {
 			p_jumped = 1;
 			body->ApplyLinearImpulseToCenter(b2Vec2(0.0f, 30.f), true);
+		}
+	}
+}
+
+void Player::OnPunch() {
+	std::vector<Box*> nearBoxes = p_curLvl->IsNearBox(p_capsule.GetBody()->GetPosition());
+	if (nearBoxes.empty())
+		return;
+	for (int i = 0; i < nearBoxes.size(); i++) {
+		if (nearBoxes[i]->GetTileID() == 1) {
+			if (p_direction) {
+				if (nearBoxes[i]->GetBody()->GetPosition().x > p_capsule.GetBody()->GetPosition().x) {
+					nearBoxes[i]->GetTileID()--;
+					nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
+				}
+			}
+			else {
+				if (nearBoxes[i]->GetBody()->GetPosition().x < p_capsule.GetBody()->GetPosition().x) {
+					nearBoxes[i]->GetTileID()--;
+					nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(-0.5f, 0.0f), true);
+				}
+			}
 		}
 	}
 }

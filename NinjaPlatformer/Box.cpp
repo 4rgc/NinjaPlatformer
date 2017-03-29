@@ -16,6 +16,7 @@ void Box::Init(BoxDef* def, bool fixedRot, bool isStatic, Angine::GLTexture text
 	p_texture = texture;
 	p_color = def->color;
 	p_dims = def->dims;
+	p_tex = 1;
 	b2BodyDef bodyDef;
 
 	if (isStatic) 
@@ -45,4 +46,19 @@ void Box::Draw(Angine::SpriteBatch& spriteBatch) {
 	destRect.z = p_dims.x;
 	destRect.w = p_dims.y;
 	spriteBatch.Draw(destRect, p_uvRect, p_texture.ID, 0.0f, p_color, p_body->GetAngle());
+}
+
+void Box::Draw(Angine::SpriteBatch & spriteBatch, Angine::TileSheet& tileSheet) {
+	glm::vec4 destRect;
+	destRect.x = p_body->GetPosition().x - p_dims.x / 2.0f;
+	destRect.y = p_body->GetPosition().y - p_dims.y / 2.0f;
+	destRect.z = p_dims.x;
+	destRect.w = p_dims.y;
+	spriteBatch.Draw(destRect, tileSheet.getUV(abs(p_tex)), tileSheet.texture.ID, 0.0f, p_color, p_body->GetAngle());
+	if(p_tex > -7)
+		p_tex--;
+}
+
+void Box::Destroy() {
+	p_body->GetWorld()->DestroyBody(p_body);
 }

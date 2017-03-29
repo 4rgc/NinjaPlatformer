@@ -17,6 +17,7 @@ class Box {
 	Angine::ColorRGBA8 p_color;
 	Angine::GLTexture p_texture;
 	glm::vec4 p_uvRect;
+	int p_tex; ///< for destroying animation (1 - normal)
 public:
 	Box();
 	~Box();
@@ -26,9 +27,14 @@ public:
 	const b2Vec2& GetDims() const { return p_dims; }
 	const Angine::ColorRGBA8& GetColor() const { return p_color; }
 	void SetColor(Angine::ColorRGBA8& color) { p_color = color; }
+	int &GetTileID() { return p_tex; }
+	const b2Vec2& GetPosition() { return p_body->GetPosition(); }
 
 	void Init(BoxDef* def, bool fixedRot, bool isStatic, Angine::GLTexture texture, glm::vec4 uvRect = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	void Draw(Angine::SpriteBatch& spriteBatch);
+	void Draw(Angine::SpriteBatch& spriteBatch, Angine::TileSheet& tileSheet);
+
+	void Destroy();
 };
 

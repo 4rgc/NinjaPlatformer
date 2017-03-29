@@ -47,7 +47,7 @@ bool IMainGame::Init() {
 }
 
 bool IMainGame::InitSystems() {
-	p_window.Create("default_name", 1920, 1080, FULLSCREEN);
+	p_window.Create("default_name", 1376, 768, 0);
 	return true;
 }
 
