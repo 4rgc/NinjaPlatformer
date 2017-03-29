@@ -13,3 +13,5 @@ The solution is set to get all the includes from "$(SolutionDir)/libs/include"<b
 <br /><br />
 <b>/NinjaPlatformer</b> - the actual game folder. <br />
 All the game physics and mechanics are in here.
+<br /><br />
+<i>Currently <b>4576</b> lines of code</i>
