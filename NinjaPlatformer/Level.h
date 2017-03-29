@@ -14,6 +14,7 @@ class Level {
 	b2Vec2 p_startPlayerPos;
 	Player p_player;
 	std::vector<Box> p_boxes;
+	std::vector<Box> p_staticBoxes;
 	Angine::TileSheet p_tileSheet;
 	Angine::TileSheet p_boxSheet;
 public:
@@ -27,7 +28,7 @@ public:
 	void Draw(Angine::Camera2D& camera);
 	void DrawDebug(Angine::DebugRenderer& debugRenderer);
 
-	void MakeBoxGroup(b2Vec2& position, b2Vec2& dims);
+	void SpawnBoxGroup(b2Vec2& position, b2Vec2& dims);
 
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
 	const Player& GetPlayerP() const { return p_player; }

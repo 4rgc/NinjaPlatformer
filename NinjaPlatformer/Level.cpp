@@ -69,23 +69,23 @@ void Level::Init() {
 					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(1.0f, 1.0f));
 					box.Init(&bDef, true, true, p_tileSheet.texture, p_tileSheet.getUV(14));
 					box.SetColor(Angine::ColorRGBA8(120,120,120,255));
-					p_boxes.push_back(box);
+					p_staticBoxes.push_back(box);
 					break;
 				case 'O': 
 					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset + 0.05f), b2Vec2(1.0f, 0.9f));
 					box.Init(&bDef, true, true, p_tileSheet.texture, p_tileSheet.getUV(17));
 					box.SetColor(Angine::ColorRGBA8(140, 140, 140, 255));
-					p_boxes.push_back(box);
+					p_staticBoxes.push_back(box);
 					break;
 				case 'b': ///< group of small boxes
 					pos = b2Vec2(j + xOffset, i + yOffset);
 					dims = b2Vec2(0.5f, 0.5f);
-					MakeBoxGroup(pos, dims);
+					SpawnBoxGroup(pos, dims);
 					break;
 				case 'B': ///< group of large boxes
 					pos = b2Vec2(j + xOffset, i + yOffset);
 					dims = b2Vec2(0.8f, 0.8f);
-					MakeBoxGroup(pos, dims);
+					SpawnBoxGroup(pos, dims);
 					break;
 			}
 		}
@@ -96,7 +96,7 @@ void Level::Init() {
 
 }
 
-void Level::MakeBoxGroup(b2Vec2 & position, b2Vec2 & dims) {
+void Level::SpawnBoxGroup(b2Vec2 & position, b2Vec2 & dims) {
 	BoxDef bDef = BoxDef(p_world, b2Vec2(position.x - dims.x, position.y), dims);
 	Box box;
 	box.Init(&bDef, false, false, p_boxSheet.texture, p_boxSheet.getUV(7));
@@ -129,8 +129,6 @@ Level Level::operator=(Level&& obj) {
 Level &Level::operator=(const Level& obj) {
 	if (this == &obj)
 		return *this;
-	if (obj.p_window == nullptr)
-		return Level();
 
 	p_world = obj.p_world;
 	p_window = obj.p_window;
@@ -141,16 +139,25 @@ Level &Level::operator=(const Level& obj) {
 
 
 void Level::Draw(Angine::Camera2D& camera) {
+	//Draw the background
 	p_spriteBatch->Begin();	
 	p_spriteBatch->Draw(glm::vec4(camera.GetPosition().x + xOffset, camera.GetPosition().y + yOffset, -xOffset * 2.0f, -yOffset * 2.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), Angine::ResourceManager::GetTexture("Textures/textures/bg.png").ID, 0.0f, Angine::ColorRGBA8(255, 255, 255, 255));
 	p_spriteBatch->End();
 	p_spriteBatch->RenderBatch();
 	
+	//Draw the boxes
 	p_spriteBatch->Begin();
+	//dynamic
 	for each(Box b in p_boxes) {
 		if(b.GetBody()->GetPosition().x > camera.GetPosition().x + xOffset -1.5f || 
 			b.GetBody()->GetPosition().x < camera.GetPosition().x - xOffset + 1.5f)
 		b.Draw(*p_spriteBatch);
+	}
+	//static
+	for each(Box b in p_staticBoxes) {
+		if (b.GetBody()->GetPosition().x > camera.GetPosition().x + xOffset - 1.5f ||
+			b.GetBody()->GetPosition().x < camera.GetPosition().x - xOffset + 1.5f)
+			b.Draw(*p_spriteBatch);
 	}
 	p_spriteBatch->End();
 	p_spriteBatch->RenderBatch();
@@ -158,12 +165,22 @@ void Level::Draw(Angine::Camera2D& camera) {
 
 void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 	glm::vec4 destRect;
-	Angine::ColorRGBA8 color(255,0,0,255);
+	Angine::ColorRGBA8 color(0,255,0,255);
+	Angine::ColorRGBA8 SColor(255, 0, 0, 255);
+	//Dynamic boxes are green
 	for each(Box b in p_boxes) {
 		destRect.x = b.GetBody()->GetPosition().x - b.GetDims().x / 2.0f;
 		destRect.y = b.GetBody()->GetPosition().y - b.GetDims().y / 2.0f;
 		destRect.w = b.GetDims().x;
 		destRect.z = b.GetDims().y;
 		debugRenderer.DrawBox(destRect, color, 0);
+	}
+	//Static boxes are red
+	for each(Box b in p_staticBoxes) {
+		destRect.x = b.GetBody()->GetPosition().x - b.GetDims().x / 2.0f;
+		destRect.y = b.GetBody()->GetPosition().y - b.GetDims().y / 2.0f;
+		destRect.w = b.GetDims().x;
+		destRect.z = b.GetDims().y;
+		debugRenderer.DrawBox(destRect, SColor, 0);
 	}
 }
