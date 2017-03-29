@@ -1,5 +1,7 @@
 #pragma once
 
+//Not implemented and is not used
+
 namespace Angine {
 	class Animator {
 		SpriteBatch p_spriteBatch;

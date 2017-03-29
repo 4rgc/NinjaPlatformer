@@ -77,12 +77,12 @@ void Level::Init() {
 					box.SetColor(Angine::ColorRGBA8(140, 140, 140, 255));
 					p_boxes.push_back(box);
 					break;
-				case 'b':
+				case 'b': ///< group of small boxes
 					pos = b2Vec2(j + xOffset, i + yOffset);
 					dims = b2Vec2(0.5f, 0.5f);
 					MakeBoxGroup(pos, dims);
 					break;
-				case 'B':
+				case 'B': ///< group of large boxes
 					pos = b2Vec2(j + xOffset, i + yOffset);
 					dims = b2Vec2(0.8f, 0.8f);
 					MakeBoxGroup(pos, dims);
