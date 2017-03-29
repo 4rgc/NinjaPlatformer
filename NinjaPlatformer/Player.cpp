@@ -156,6 +156,7 @@ void Player::Update(Angine::InputManager& inputManager) {
 			}
 		}
 	}
+	//You can jump 200ms after you got off the ground
 	if ((p_isGrounded || time.GetMilliseconds() < 200.0f) && p_jumped == false) {
 		//We can jump
 		if (inputManager.IsKeyPressed(SDLK_SPACE)) {

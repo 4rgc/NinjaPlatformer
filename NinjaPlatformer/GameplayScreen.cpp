@@ -118,7 +118,7 @@ void GameplayScreen::OnExit() {
 }
 
 void GameplayScreen::Update() {
-	p_MainCamera.SetPosition(glm::vec2(p_player.GetPosition().x, p_player.GetPosition().y));
+	p_MainCamera.SetPosition(glm::vec2(p_player.GetPosition().x + p_window->getScreenW() /4.5f / p_MainCamera.GetScale(), p_player.GetPosition().y));
 	if (p_MainCamera.GetPosition().x < 0.0f)
 		p_MainCamera.SetPosition(glm::vec2(0.0f, p_MainCamera.GetPosition().y));
 	if (p_MainCamera.GetPosition().y < 0.0f)
