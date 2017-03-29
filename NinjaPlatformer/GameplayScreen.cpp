@@ -73,7 +73,7 @@ void GameplayScreen::OnEntry() {
 
 	//Init camera
 	p_MainCamera.Init(p_window->getScreenW(), p_window->getScreenH());
-	p_MainCamera.SetScale(32.0f);
+	p_MainCamera.SetScale(24.0f);
 
 	p_curLvl = Level(p_world.get(), p_window, p_MainCamera);
 	p_curLvl.Load("empty.txt");
