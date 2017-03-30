@@ -12,8 +12,8 @@ namespace Angine {
 		float p_fps = 0;
 		Window p_window;
 
-		bool Init();
-		bool InitSystems();
+		bool Init(int screenWidth, int screenHeight, WindowFlags flags);
+		bool InitSystems(int screenWidth, int screenHeight, WindowFlags flags);
 
 		
 		
@@ -23,7 +23,7 @@ namespace Angine {
 
 		InputManager inputManager;
 
-		void Run();
+		void Run(int screenWidth, int screenHeight, WindowFlags flags);
 		void Exit();
 
 		void OnSDLEvent(SDL_Event& evnt);

@@ -238,7 +238,7 @@ std::vector<Box*> Level::IsNearBox(const b2Vec2& checkPos) {
 	for each(Box* b in p_boxes) {
 		BPos = b->GetBody()->GetPosition();
 		if (floor(checkPos.y) == floor((float)BPos.y) || ceil(checkPos.y) == ceil((float)BPos.y)) {
-			if (floor((float)BPos.x) < floor(checkPos.x) + 1.5f && floor((float)BPos.x) > floor(checkPos.x) - 1.5f)
+			if (floor((float)BPos.x) < floor(checkPos.x) + 1.1f && floor((float)BPos.x) > floor(checkPos.x) - 1.1f)
 				nearBoxes.push_back(b);
 		}
 	}

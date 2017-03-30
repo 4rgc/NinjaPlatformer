@@ -34,10 +34,10 @@ void IMainGame::OnSDLEvent(SDL_Event& evnt) {
 	}
 }
 
-bool IMainGame::Init() {
+bool IMainGame::Init(int screenWidth, int screenHeight, WindowFlags flags) {
 	Angine::Init();
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL,1);
-	if(!InitSystems()) return false;
+	if(!InitSystems(screenWidth, screenHeight, flags)) return false;
 	OnInit();
 	AddScreens();
 	p_curScreen = p_screenList->GetCur();
@@ -46,14 +46,14 @@ bool IMainGame::Init() {
 	return true;
 }
 
-bool IMainGame::InitSystems() {
-	p_window.Create("default_name", 1376, 768, 0);
+bool IMainGame::InitSystems(int screenWidth, int screenHeight, WindowFlags flags) {
+	p_window.Create("default_name", screenWidth, screenHeight, flags);
 	return true;
 }
 
-void IMainGame::Run() {
+void IMainGame::Run(int screenWidth, int screenHeight, WindowFlags flags) {
 	
-	if (!Init()) return;
+	if (!Init(screenWidth, screenHeight, flags)) return;
 
 	p_isRunning = 1;
 	FPSLimiter limiter;
