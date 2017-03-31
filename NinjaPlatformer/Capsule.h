@@ -29,5 +29,10 @@ public:
 	void Init(CapsuleDef* def, bool fixedRot);
 
 	void DrawDebug(Angine::DebugRenderer& debugRenderer);
+
+	void Destroy() {
+		p_body->GetWorld()->DestroyBody(p_body);
+		p_body = nullptr;
+	}
 };
 

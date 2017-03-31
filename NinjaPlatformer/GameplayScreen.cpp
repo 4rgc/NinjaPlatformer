@@ -1,16 +1,38 @@
 #include "Header.h"
 
-#define NO_DEBUG_RENDER
+#define DEBUG_RENDER
 
 GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_window(window)
 				  {
-	p_screenIndex = SCREEN_INDEX_GAMEPLAY;
+	p_screenIndex = SCREEN_INDEX_GAMEPLAY;	
+	//Initialize the spritebatch
+	p_spriteBatch = new Angine::SpriteBatch();
+	p_spriteBatch->Init();
+
+	//Shaders Init
+	//Compile texture shaders
+	p_textureProgram.CompileShaders("Shaders/textureShading.vert", "Shaders/textureShading.frag");
+	p_textureProgram.AddAttribute("vertexPosition");
+	p_textureProgram.AddAttribute("vertexColor");
+	p_textureProgram.AddAttribute("vertexUV");
+	p_textureProgram.LinkShaders();
+	//Compile light shaders
+	p_lightProgram.CompileShaders("Shaders/lightShading.vert", "Shaders/lightShading.frag");
+	p_lightProgram.AddAttribute("vertexPosition");
+	p_lightProgram.AddAttribute("vertexColor");
+	p_lightProgram.AddAttribute("vertexUV");
+	p_lightProgram.LinkShaders();
+
+	//Init the debugRenderer
+	p_debugRenderer.Init();
 }
 
 
 GameplayScreen::~GameplayScreen()
 {
+	b2World* del = p_world.release();
+	delete del;
 }
 
 int GameplayScreen::GetNextScreenIndex() const {
@@ -18,7 +40,7 @@ int GameplayScreen::GetNextScreenIndex() const {
 }
 
 int GameplayScreen::GetPrevScreenIndex() const {
-	return SCREEN_INDEX_NO_SCREEN;
+	return SCREEN_INDEX_MAINMENU;
 }
 
 void GameplayScreen::Build() {
@@ -26,7 +48,9 @@ void GameplayScreen::Build() {
 }
 
 void GameplayScreen::Destroy() {
-
+	p_textureProgram.Dispose();
+	p_lightProgram.Dispose();
+	p_debugRenderer.Dispose();
 }
 
 void GameplayScreen::OnEntry() {
@@ -54,23 +78,6 @@ void GameplayScreen::OnEntry() {
 		p_boxes.push_back(newBox);
 	}
 
-	//Initialize the spritebatch
-	p_spriteBatch.Init();
-
-	//Shaders Init
-	//Compile texture shaders
-	p_textureProgram.CompileShaders("Shaders/textureShading.vert", "Shaders/textureShading.frag");
-	p_textureProgram.AddAttribute("vertexPosition");
-	p_textureProgram.AddAttribute("vertexColor");
-	p_textureProgram.AddAttribute("vertexUV");
-	p_textureProgram.LinkShaders();
-	//Compile light shaders
-	p_lightProgram.CompileShaders("Shaders/lightShading.vert", "Shaders/lightShading.frag");
-	p_lightProgram.AddAttribute("vertexPosition");
-	p_lightProgram.AddAttribute("vertexColor");
-	p_lightProgram.AddAttribute("vertexUV");
-	p_lightProgram.LinkShaders();
-
 	//Init camera
 	p_MainCamera.Init(p_window->getScreenW(), p_window->getScreenH());
 	p_MainCamera.SetScale(48.0f);
@@ -80,13 +87,10 @@ void GameplayScreen::OnEntry() {
 	p_curLvl = Level(p_world.get(), p_window, p_MainCamera);
 	p_curLvl.Load("empty.txt");
 	p_curLvl.Init();
-	p_player = p_curLvl.GetPlayerP();
+	p_player = const_cast<Player*>(p_curLvl.GetPlayerP());
 
 	//Init the UI
 	InitUI();
-	
-	//Init the debugRenderer
-	p_debugRenderer.Init();
 
 }
 
@@ -112,23 +116,30 @@ bool GameplayScreen::OnExitClicked(const CEGUI::EventArgs& e) {
 }
 
 void GameplayScreen::OnExit() {
-	p_debugRenderer.Dispose();
+	p_curLvl.Destroy();
 }
 
 void GameplayScreen::Update() {
-	p_MainCamera.SetPosition(glm::vec2(p_player.GetPosition().x + p_window->getScreenW() /4.5f / p_MainCamera.GetScale(), p_player.GetPosition().y));
+	p_MainCamera.SetPosition(glm::vec2(p_player->GetPosition().x + p_window->getScreenW() /4.5f / p_MainCamera.GetScale(), p_player->GetPosition().y));
 	if (p_MainCamera.GetPosition().x < 0.0f)
 		p_MainCamera.SetPosition(glm::vec2(0.0f, p_MainCamera.GetPosition().y));
 	if (p_MainCamera.GetPosition().y < 0.0f)
 		p_MainCamera.SetPosition(glm::vec2(p_MainCamera.GetPosition().x, 0.0f));
 	p_MainCamera.Update();
 	CheckInput();
-	p_player.Update(p_game->inputManager);
+	if (p_curLvl.Update(p_game->inputManager)) {
+		p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
+		p_player = nullptr;
+		return;
+	}
 	//Update the physics simulation
 	p_world->Step(1.0f / 120.0f, 6, 2);
 }
 
 void GameplayScreen::Draw() {
+	if (!p_player) {
+		return;
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.15f, 1.0f);
 
@@ -143,18 +154,12 @@ void GameplayScreen::Draw() {
 	GLint pUniform = p_textureProgram.GetUniformLocation("transformationMatrix");
 	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
 
-	p_curLvl.Draw(p_MainCamera);
+	p_spriteBatch->Begin();
 
-	p_spriteBatch.Begin();
+	p_curLvl.Draw(p_MainCamera, *p_spriteBatch);
 
-	for (auto& b : p_boxes) {
-		b.Draw(p_spriteBatch);
-	}
-
-	p_player.Draw(p_spriteBatch);
-
-	p_spriteBatch.End();
-	p_spriteBatch.RenderBatch();
+	p_spriteBatch->End();
+	p_spriteBatch->RenderBatch();
 
 	p_textureProgram.UnUse();
 
@@ -164,20 +169,20 @@ void GameplayScreen::Draw() {
 	//Render some test lights
 	Light playerLight;
 	playerLight.color = Angine::ColorRGBA8(255, 255, 255, 30);
-	playerLight.position = p_player.GetPosition();
+	playerLight.position = p_player->GetPosition();
 	playerLight.size = 20.0f;
 
 	p_lightProgram.Use();
 	pUniform = p_lightProgram.GetUniformLocation("transformationMatrix");
 	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
 
-	p_spriteBatch.Begin();
+	p_spriteBatch->Begin();
 
-	playerLight.Draw(p_spriteBatch);
+	playerLight.Draw(*p_spriteBatch);
 	//mouseLight.Draw(p_spriteBatch);
 
-	p_spriteBatch.End();
-	p_spriteBatch.RenderBatch();
+	p_spriteBatch->End();
+	p_spriteBatch->RenderBatch();
 
 	p_lightProgram.UnUse();
 
@@ -195,7 +200,6 @@ void GameplayScreen::Draw() {
 		destRect.z = b.GetDims().y;
 		p_debugRenderer.DrawBox(destRect, Angine::ColorRGBA8(255,255,255,255), b.GetBody()->GetAngle());
 	}
-	p_player.DrawDebug(p_debugRenderer);
 	p_curLvl.DrawDebug(p_debugRenderer);
 	p_debugRenderer.End();
 	p_debugRenderer.Render(projectionMatrix, 2.0f);

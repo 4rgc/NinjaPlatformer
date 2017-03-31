@@ -11,6 +11,7 @@ Player::~Player() {
 void Player::Init(CapsuleDef* def, Level* thisLvl) {
 	Angine::GLTexture texture = Angine::ResourceManager::GetTexture("Textures/ninja/blue_ninja.png");
 	p_capsule.Init(def, true);
+	p_capsule.GetBody()->SetUserData(this);
 	p_texture.Init(texture, glm::ivec2(10,2));
 	p_curLvl = thisLvl;
 }
@@ -106,10 +107,6 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 	spriteBatch.Draw(destRect, uvRect, p_texture.texture.ID, 0.0f, Angine::ColorRGBA8(255,255,255,255), body->GetAngle());
 }
 
-void Player::DrawDebug(Angine::DebugRenderer& debugRenderer) {
-	p_capsule.DrawDebug(debugRenderer);
-}
-
 void Player::Update(Angine::InputManager& inputManager) {
 	float MAX_SPEED = 8.0f;
 	b2Body* body = p_capsule.GetBody();
@@ -124,6 +121,8 @@ void Player::Update(Angine::InputManager& inputManager) {
 	else {
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x * 0.95, body->GetLinearVelocity().y));
 	}
+	if (inputManager.IsKeyDown(SDLK_s))
+		body->ApplyForceToCenter(b2Vec2(0.0f, -60.0f), true);
 	if (inputManager.IsKeyPressed(SDLK_LSHIFT)) {
 		p_isPunching = 1;
 		OnPunch();
@@ -163,13 +162,14 @@ void Player::Update(Angine::InputManager& inputManager) {
 		//We can jump
 		if (inputManager.IsKeyPressed(SDLK_SPACE)) {
 			p_jumped = 1;
-			body->ApplyLinearImpulseToCenter(b2Vec2(0.0f, 30.f), true);
+			body->ApplyLinearImpulseToCenter(b2Vec2(0.0f, 40.f), true);
 		}
 	}
 }
 
 void Player::OnPunch() {
 	std::vector<Box*> nearBoxes = p_curLvl->IsNearBox(p_capsule.GetBody()->GetPosition());
+	//TODO: Implement killing enemies
 	if (nearBoxes.empty())
 		return;
 	for (int i = 0; i < nearBoxes.size(); i++) {

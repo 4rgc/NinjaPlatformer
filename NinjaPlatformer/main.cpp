@@ -1,8 +1,8 @@
 #include "Header.h"
 
 int main(int argc, char** argv) {
-	int w, h;
-	Angine::WindowFlags runFlags;
+	int w = 0, h = 0;
+	Angine::WindowFlags runFlags = Angine::WindowFlags();
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "fullscreen")) {
 			runFlags = Angine::WindowFlags::FULLSCREEN;

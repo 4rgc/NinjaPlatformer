@@ -6,14 +6,14 @@ class GameplayScreen : public Angine::IGameScreen {
 	std::vector<Box> p_boxes;
 
 	Angine::DebugRenderer p_debugRenderer;
-	Angine::SpriteBatch p_spriteBatch;
+	Angine::SpriteBatch* p_spriteBatch;
 	Angine::GLSLProgram p_textureProgram;
 	Angine::GLSLProgram p_lightProgram;
 	Angine::Camera2D p_MainCamera;
 	Angine::Window* p_window;
 	Angine::GUI p_GUI;
 
-	Player p_player; ///< const reference
+	Player* p_player; ///< const reference
 
 	Level p_curLvl;
 

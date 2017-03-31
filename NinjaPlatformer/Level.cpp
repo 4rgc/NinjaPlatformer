@@ -7,14 +7,16 @@ Level::Level(b2World* world, const Angine::Window* window, Angine::Camera2D came
 			xOffset(-((window->getScreenW() / 2.0f) / camera.GetScale())),
 			yOffset(-((window->getScreenH() / 2.0f) / camera.GetScale()))
 {
-	p_spriteBatch = new Angine::SpriteBatch();
-	p_spriteBatch->Init();
 }
 
 Level::Level(const Level& obj) : xOffset(obj.xOffset), yOffset(obj.yOffset) {
 	p_window = obj.p_window;
 	p_world = obj.p_world;
 	p_camera = obj.p_camera;
+}
+
+Level::~Level() {
+	Destroy();
 }
 
 void Level::Load(const std::string& levelPath) {
@@ -64,6 +66,13 @@ void Level::Init() {
 	Box* boxes;
 	Box* sBoxes;
 	int count = 0, sCount = 0;
+
+	p_player = new Player;
+	CapsuleDef player(p_world, p_startPlayerPos, b2Vec2(1.0f, 2.0f), 1.0f, 0.1f);
+	player.drawDims = glm::vec2(2.0f);
+	p_player->Init(&player, this);
+	p_agents.push_back(p_player);
+
 	//Count quantity of all boxes in the level to allocate cache-friendly memory
 	for (int i = 0; i < p_levelData.size(); i++) {
 		for (int j = 0; j < p_levelData[i].size(); j++) {
@@ -85,6 +94,7 @@ void Level::Init() {
 	}
 	boxes = new Box[count];
 	sBoxes = new Box[sCount];
+
 	int iBox = 0, iSBox = 0;
 	for (int i = 0; i < p_levelData.size(); i++) {
 		for (int j = 0; j < p_levelData[i].size(); j++) {
@@ -113,12 +123,16 @@ void Level::Init() {
 					dims = b2Vec2(0.8f, 0.8f);
 					SpawnBoxGroup(boxes, iBox, pos, dims);
 					break;
+				case 'E': 
+					CapsuleDef enemy(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(0.8f, 1.8f), 1.0f, 0.1f);
+					enemy.drawDims = glm::vec2(1.6f,1.8f);
+					Enemy* e = new Enemy;
+					e->Init(&enemy, this);
+					p_agents.push_back(e);
+					break;
 			}
 		}
 	}
-	CapsuleDef player(p_world, p_startPlayerPos, b2Vec2(1.0f, 2.0f), 1.0f, 0.1f);
-	player.drawDims = glm::vec2(2.0f);
-	p_player.Init(&player, this);
 
 }
 
@@ -149,8 +163,6 @@ Level Level::operator=(Level&& obj) {
 	obj.p_window = nullptr;
 	p_camera = obj.p_camera;
 	obj.p_camera = nullptr;
-	p_spriteBatch = obj.p_spriteBatch;
-	obj.p_spriteBatch = nullptr;
 	xOffset = obj.xOffset;
 	yOffset = obj.yOffset;
 	return *this;
@@ -163,27 +175,26 @@ Level &Level::operator=(const Level& obj) {
 	p_world = obj.p_world;
 	p_window = obj.p_window;
 	p_camera = obj.p_camera;
-	p_spriteBatch = obj.p_spriteBatch;
 	return *this;
 }
 
 
-void Level::Draw(Angine::Camera2D& camera) {
+void Level::Draw(Angine::Camera2D& camera, Angine::SpriteBatch& spriteBatch) {
 	//Draw the background
-	p_spriteBatch->Begin();	
-	p_spriteBatch->Draw(glm::vec4(camera.GetPosition().x + xOffset, camera.GetPosition().y + yOffset, -xOffset * 2.0f, -yOffset * 2.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), Angine::ResourceManager::GetTexture("Textures/textures/bg.png").ID, 0.0f, Angine::ColorRGBA8(255, 255, 255, 255));
-	p_spriteBatch->End();
-	p_spriteBatch->RenderBatch();
+	spriteBatch.Begin();
+	spriteBatch.Draw(glm::vec4(camera.GetPosition().x + xOffset, camera.GetPosition().y + yOffset, -xOffset * 2.0f, -yOffset * 2.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), Angine::ResourceManager::GetTexture("Textures/textures/bg.png").ID, 0.0f, Angine::ColorRGBA8(255, 255, 255, 255));
+	spriteBatch.End();
+	spriteBatch.RenderBatch();
 	
 	//Draw the boxes
-	p_spriteBatch->Begin();
+	spriteBatch.Begin();
 	//dynamic
 	for (int i = 0; i < p_boxes.size(); ) {
 		//Draw boxes only if they are in vision 
 		if (p_boxes[i]->GetBody()->GetPosition().x > camera.GetPosition().x + xOffset - 1.5f ||
 			p_boxes[i]->GetBody()->GetPosition().x < camera.GetPosition().x - xOffset + 1.5f) {
 			if (p_boxes[i]->GetTileID() != 1) {
-				p_boxes[i]->Draw(*p_spriteBatch, p_boxSheet);
+				p_boxes[i]->Draw(spriteBatch, p_boxSheet);
 				if (p_boxes[i]->GetTileID() == -7) {
 					p_boxes[i]->Destroy();
 					p_boxes[i] = p_boxes.back();
@@ -193,7 +204,7 @@ void Level::Draw(Angine::Camera2D& camera) {
 					i++;
 			}
 			else {
-				p_boxes[i]->Draw(*p_spriteBatch);
+				p_boxes[i]->Draw(spriteBatch);
 				i++;
 			}
 		}
@@ -203,10 +214,13 @@ void Level::Draw(Angine::Camera2D& camera) {
 		//Draw boxes only if they are in vision 
 		if (b->GetBody()->GetPosition().x > camera.GetPosition().x + xOffset - 1.5f ||
 			b->GetBody()->GetPosition().x < camera.GetPosition().x - xOffset + 1.5f)
-			b->Draw(*p_spriteBatch);
+			b->Draw(spriteBatch);
 	}
-	p_spriteBatch->End();
-	p_spriteBatch->RenderBatch();
+	for each (Agent* a in p_agents) {
+		a->Draw(spriteBatch);
+	}
+	spriteBatch.End();
+	spriteBatch.RenderBatch();
 }
 
 void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
@@ -229,6 +243,33 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 		destRect.z = b->GetDims().y;
 		debugRenderer.DrawBox(destRect, SColor, 0);
 	}
+	for each (Agent* a in p_agents) {
+		a->DrawDebug(debugRenderer);
+	}
+}
+
+bool Level::Update(Angine::InputManager& inputManager) {
+	p_player->Update(inputManager);
+	for (int i = 1; i < p_agents.size(); i++) {
+		((Enemy*)p_agents[i])->Update(p_player, p_agents);
+	}
+	if (p_player)
+		return false;
+	return true;
+}
+
+void Level::Destroy() {
+	p_world = nullptr;
+	p_startPlayerPos = b2Vec2(0, 0);
+	for each (Agent* agent in p_agents)
+	{
+		agent->Destroy();
+		delete agent;
+	}
+	p_levelData.clear();
+	p_agents.clear();
+	p_boxes.clear();
+	p_staticBoxes.clear();
 }
 
 //Returns a vector of boxes near to checkPos

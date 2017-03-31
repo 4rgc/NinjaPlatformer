@@ -8,7 +8,8 @@ Box::Box() {
 
 
 Box::~Box() {
-
+	if (p_body)
+		Destroy();
 }
 
 void Box::Init(BoxDef* def, bool fixedRot, bool isStatic, Angine::GLTexture texture, glm::vec4 uvRect) {
@@ -61,4 +62,5 @@ void Box::Draw(Angine::SpriteBatch & spriteBatch, Angine::TileSheet& tileSheet) 
 
 void Box::Destroy() {
 	p_body->GetWorld()->DestroyBody(p_body);
+	p_body = nullptr;
 }
