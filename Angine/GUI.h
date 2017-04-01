@@ -8,6 +8,9 @@ namespace Angine {
 		CEGUI::Window* p_root;
 		unsigned int p_lastTime = 0;
 	public:
+
+		std::function<void()> CustomUpdate = []() {};
+
 		void Init(const std::string& resourceDir);
 		void Destroy();
 		 
@@ -16,7 +19,7 @@ namespace Angine {
 		CEGUI::Window* CreateWidget(const std::string& type, const glm::vec4& destRectPerc, const glm::vec4& destRectPix, const std::string& name = "");
 		static void SetWidgetDestRect(CEGUI::Window* widget, const glm::vec4& destRectPerc, const glm::vec4& destRectPix);
 		void SetMouseCursor(const std::string& imageFile);
-		void ShowMouswCursor();
+		void ShowMouseCursor();
 		void HideMouseCursor();
 
 		void OnSDLEvent(SDL_Event& evnt);

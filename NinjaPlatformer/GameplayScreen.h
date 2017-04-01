@@ -12,6 +12,8 @@ class GameplayScreen : public Angine::IGameScreen {
 	Angine::Camera2D p_MainCamera;
 	Angine::Window* p_window;
 	Angine::GUI p_GUI;
+	
+	std::vector<CEGUI::Window*> p_updGUI;
 
 	Player* p_player; ///< const reference
 

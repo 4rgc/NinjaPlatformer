@@ -33,7 +33,7 @@ void MainMenuScreen::InitUI() {
 	exitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&MainMenuScreen::OnExitClicked, this));
 
 	p_GUI.SetMouseCursor("TaharezLook/MouseArrow");
-	p_GUI.ShowMouswCursor();
+	p_GUI.ShowMouseCursor();
 	SDL_ShowCursor(0);
 }
 

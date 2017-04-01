@@ -36,6 +36,7 @@ public:
 
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
 	const Player* GetPlayerP() const { return p_player; }
+	int GetEnemiesLeft() const { return p_agents.size() - 1; }
 
 	Level operator=(Level&& obj);
 	Level &operator=(const Level& obj);

@@ -1,4 +1,5 @@
 #include "Header.h"
+#include <stdarg.h>
 
 #define NO_DEBUG_RENDER
 
@@ -98,14 +99,21 @@ void GameplayScreen::InitUI() {
 	p_GUI.Init("GUI");
 	p_GUI.LoadScheme("TaharezLook.scheme");
 	p_GUI.SetFont("DejaVuSans-10");
-	CEGUI::PushButton* testButton = static_cast<CEGUI::PushButton*>(p_GUI.CreateWidget("TaharezLook/Button", glm::vec4(0.05f, 0.05f, 0.1f, 0.05f), glm::vec4(0.0f), "TestButton"));
-	testButton->setText("Exit Game");
+	CEGUI::PushButton* exitButton = static_cast<CEGUI::PushButton*>(p_GUI.CreateWidget("TaharezLook/Button", glm::vec4(0.05f, 0.05f, 0.1f, 0.05f), glm::vec4(0.0f), "TestButton"));
+	exitButton->setText("Exit Game");
+	CEGUI::DefaultWindow* leftLabel = static_cast<CEGUI::DefaultWindow*>(p_GUI.CreateWidget("TaharezLook/Label", glm::vec4(0.2f, 0.05f, 0.3f, 0.05f), glm::vec4(0.0f), "EnemiesLeftLabel"));
+	leftLabel->setText((CEGUI::String)std::string("Enemies left: " + std::to_string(p_curLvl.GetEnemiesLeft())));
+	p_updGUI.push_back(leftLabel);
+	//Lambda for level stat updating
+	p_GUI.CustomUpdate = [windows = p_updGUI, &level = p_curLvl]() ->void{
+		windows[0]->setText("Enemies left: " + std::to_string(level.GetEnemiesLeft()));
+	};
 
 	//Set the event to be called when we click
-	testButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GameplayScreen::OnExitClicked, this));
+	exitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GameplayScreen::OnExitClicked, this));
 
 	p_GUI.SetMouseCursor("TaharezLook/MouseArrow");
-	p_GUI.ShowMouswCursor();
+	p_GUI.ShowMouseCursor();
 	SDL_ShowCursor(0);
 }
 
@@ -127,6 +135,7 @@ void GameplayScreen::Update() {
 		p_MainCamera.SetPosition(glm::vec2(p_MainCamera.GetPosition().x, 0.0f));
 	p_MainCamera.Update();
 	CheckInput();
+	p_GUI.Update();
 	if (p_curLvl.Update(p_game->inputManager)) {
 		p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
 		p_player = nullptr;

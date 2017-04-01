@@ -67,7 +67,7 @@ void GUI::SetMouseCursor(const std::string & imageFile) {
 	p_context->getMouseCursor().setDefaultImage(imageFile);
 }
 
-void GUI::ShowMouswCursor() {
+void GUI::ShowMouseCursor() {
 	p_context->getMouseCursor().show();
 }
 
@@ -221,6 +221,7 @@ void GUI::OnSDLEvent(SDL_Event & evnt) {
 }
 
 void GUI::Update() {
+	CustomUpdate();
 	unsigned int elapsed = 0;
 	if (!p_lastTime) {
 		elapsed = 0;

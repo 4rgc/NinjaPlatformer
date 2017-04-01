@@ -254,7 +254,7 @@ bool Level::Update(Angine::InputManager& inputManager) {
 		((Enemy*)p_agents[i])->Update(p_player, p_agents);
 	}
 	if (p_player)
-		return false;
+		return false || (!GetEnemiesLeft());
 	return true;
 }
 
