@@ -190,15 +190,16 @@ void Player::OnPunch(std::vector<Agent*>& agents) {
 		}
 	}
 	if (!nearEnemies.empty()) {
-		for each(Enemy* e in nearEnemies) {
-			for (int i = 1; i < agents.size(); i++) {
-				if (e->GetCapsule().GetBody()->GetUserData() ==
-					agents[i]->GetCapsule().GetBody()->GetUserData()) {
-					if (agents[i]->SubtrHP(100)) {
-						agents[i]->Destroy();
-						delete agents[i];
-						agents[i] = agents.back();
+		for (int i = 0; i < nearEnemies.size(); i++) {
+			for (int j = 1; j < agents.size(); j++) {
+				if (nearEnemies[i]->GetCapsule().GetBody()->GetUserData() ==
+					agents[j]->GetCapsule().GetBody()->GetUserData()) {
+					if (agents[j]->SubtrHP(100)) {
+						agents[j]->Destroy();
+						delete agents[j];
+						agents[j] = agents.back();
 						agents.pop_back();
+						break;
 					}
 				}
 			}

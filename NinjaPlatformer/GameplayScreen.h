@@ -15,9 +15,12 @@ class GameplayScreen : public Angine::IGameScreen {
 	
 	std::vector<CEGUI::Window*> p_updGUI;
 
+	std::vector<std::string> p_levelPaths;
+
 	Player* p_player; ///< const reference
 
 	Level p_curLvl;
+	int p_levelIndex;
 
 	void InitUI();
 	bool OnExitClicked(const CEGUI::EventArgs& e);

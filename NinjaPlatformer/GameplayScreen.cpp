@@ -83,10 +83,14 @@ void GameplayScreen::OnEntry() {
 	p_MainCamera.Init(p_window->getScreenW(), p_window->getScreenH());
 	p_MainCamera.SetScale(52.0f);
 
+	//Load levelpaths
+	p_levelPaths.push_back("level1.txt");
+	p_levelPaths.push_back("level2.txt");
+	p_levelPaths.push_back("level3.txt");
 
 	//Init the level and player
 	p_curLvl = Level(p_world.get(), p_window, p_MainCamera);
-	p_curLvl.Load("empty.txt");
+	p_curLvl.Load(p_levelPaths[p_levelIndex]);
 	p_curLvl.Init();
 	p_player = const_cast<Player*>(p_curLvl.GetPlayerP());
 
@@ -135,15 +139,20 @@ void GameplayScreen::OnExit() {
 }
 
 void GameplayScreen::Update() {
-	p_MainCamera.SetPosition(glm::vec2(p_player->GetPosition().x + p_window->getScreenW() /4.5f / p_MainCamera.GetScale(), p_player->GetPosition().y));
+	p_MainCamera.SetPosition(glm::vec2(p_player->GetPosition().x + p_window->getScreenW() / 4.5f / p_MainCamera.GetScale(), p_player->GetPosition().y));
 	if (p_MainCamera.GetPosition().x < 0.0f)
 		p_MainCamera.SetPosition(glm::vec2(0.0f, p_MainCamera.GetPosition().y));
+	else if (p_MainCamera.GetPosition().x > (p_curLvl.GetRightCameraPoint() - (p_window->getScreenW() / p_MainCamera.GetScale()) - 1.0f)) {
+		p_MainCamera.SetPosition(glm::vec2((p_curLvl.GetRightCameraPoint() - (p_window->getScreenW() / p_MainCamera.GetScale()) - 1.0f), p_MainCamera.GetPosition().y));
+	}
 	if (p_MainCamera.GetPosition().y < 0.0f)
 		p_MainCamera.SetPosition(glm::vec2(p_MainCamera.GetPosition().x, 0.0f));
 	p_MainCamera.Update();
 	CheckInput();
 	p_GUI.Update();
-	if (p_curLvl.Update(p_game->inputManager)) {
+	if (int a = p_curLvl.Update(p_game->inputManager)) {
+		if (a == 1)
+			p_levelIndex++;
 		p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
 		p_player = nullptr;
 		return;

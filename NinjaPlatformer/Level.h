@@ -27,7 +27,7 @@ public:
 	void Init();
 	void Draw(Angine::Camera2D& camera, Angine::SpriteBatch& spriteBatch);
 	void DrawDebug(Angine::DebugRenderer& debugRenderer);
-	bool Update(Angine::InputManager& inputManager); ///< Returns true if player is dead
+	int Update(Angine::InputManager& inputManager); ///< Returns -1 if player is dead, 1 if player won
 	void Destroy();
 
 	void SpawnBoxGroup(Box* boxes, int& boxesPos, b2Vec2& position, b2Vec2& dims);
@@ -37,6 +37,7 @@ public:
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
 	const Player* GetPlayerP() const { return p_player; }
 	int GetEnemiesLeft() const { return p_agents.size() - 1; }
+	float GetRightCameraPoint() { return p_levelData[0].size(); }
 
 	Level operator=(Level&& obj);
 	Level &operator=(const Level& obj);

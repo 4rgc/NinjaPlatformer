@@ -123,12 +123,25 @@ void Level::Init() {
 					dims = b2Vec2(0.8f, 0.8f);
 					SpawnBoxGroup(boxes, iBox, pos, dims);
 					break;
-				case 'E': 
-					CapsuleDef enemy(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(0.8f, 1.8f), 1.0f, 0.1f);
-					enemy.drawDims = glm::vec2(1.6f,1.8f);
-					Enemy* e = new Enemy;
-					e->Init(&enemy, this);
-					p_agents.push_back(e);
+				case 'E': {
+						CapsuleDef c1Def(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(0.8f, 1.8f), 1.0f, 0.1f);
+						c1Def.drawDims = glm::vec2(1.6f, 1.8f);
+						Enemy* e = new Enemy;
+						e->Init(&c1Def, this);
+						e->SetDir(0);
+						p_agents.push_back(e);
+						e = nullptr;
+					}
+					break;
+				case '3': {
+						CapsuleDef c2Def(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(0.8f, 1.8f), 1.0f, 0.1f);
+						c2Def.drawDims = glm::vec2(1.6f, 1.8f);
+						Enemy* e1 = new Enemy;
+						e1->Init(&c2Def, this);
+						e1->SetDir(1);
+						p_agents.push_back(e1);
+						e1 = nullptr;
+					}
 					break;
 			}
 		}
@@ -248,14 +261,14 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 	}
 }
 
-bool Level::Update(Angine::InputManager& inputManager) {
+int Level::Update(Angine::InputManager& inputManager) {
 	p_player->Update(inputManager, p_agents);
 	for (int i = 1; i < p_agents.size(); i++) {
 		((Enemy*)p_agents[i])->Update(p_player, p_agents);
 	}
 	if (p_player)
 		return false || (!GetEnemiesLeft());
-	return true;
+	return -1;
 }
 
 void Level::Destroy() {

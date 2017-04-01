@@ -16,5 +16,6 @@ public:
 
 	void Update(Player*& player, std::vector<Agent*>& agents);
 
+	void SetDir(bool dir) { p_direction = dir; }
 };
 
