@@ -1,6 +1,6 @@
 #include "Header.h"
 
-#define DEBUG_RENDER
+#define NO_DEBUG_RENDER
 
 GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_window(window)
@@ -54,7 +54,7 @@ void GameplayScreen::Destroy() {
 }
 
 void GameplayScreen::OnEntry() {
-	b2Vec2 gravity(0.0f, -25.0f);
+	b2Vec2 gravity(0.0f, -30.0f);
 	p_world = std::make_unique<b2World>(gravity);
 
 	std::mt19937 randEngine(time(NULL));

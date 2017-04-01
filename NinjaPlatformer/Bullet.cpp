@@ -49,12 +49,14 @@ bool Bullet::Update(std::vector<Agent*>& agents, Player*& playerPtr) {
 					if (agents[i]->GetCapsule().GetBody()->GetUserData() == 
 						ce->contact->GetFixtureB()->GetBody()->GetUserData()) {
 						//TODO: instead of destroying an agent, just subtract damage from HP
-						if (i == 0)
-							playerPtr = nullptr;
-						agents[i]->Destroy();
-						delete agents[i];
-						agents[i] = agents.back();
-						agents.pop_back();
+						if (agents[i]->SubtrHP(p_damage)) {
+							if (i == 0)
+								playerPtr = nullptr;
+							agents[i]->Destroy();
+							delete agents[i];
+							agents[i] = agents.back();
+							agents.pop_back();
+						}
 						break;
 					}
 				}
@@ -62,28 +64,6 @@ bool Bullet::Update(std::vector<Agent*>& agents, Player*& playerPtr) {
 				break;
 			}
 		}
-		/*
-		if (touching) {
-			for (int i = 0; i < agents.size(); i++) {
-				//If we are on parent, continue looping
-				if (agents[i]->GetCapsule().GetBody()->GetUserData() == p_parent->GetCapsule().GetBody()->GetUserData()) {
-					continue;
-				}
-				if ((b2Vec2(floor(agents[i]->GetPosition().x), floor(agents[i]->GetPosition().y)) ==
-					b2Vec2(floor(p_box->GetPosition().x), floor(p_box->GetPosition().y))) || 
-					(b2Vec2(ceil(agents[i]->GetPosition().x), ceil(agents[i]->GetPosition().y)) ==
-						b2Vec2(ceil(p_box->GetPosition().x), ceil(p_box->GetPosition().y)))) {
-					//TODO: instead of destroying an agent, just subtract damage from HP
- 					agents[i]->Destroy();
-					delete agents[i];
-					agents[i] = agents.back();
-					agents.pop_back();
-					break;
-				}
-			}
-			return false;
-			
-		}*/
 	}
 	return true;
 }

@@ -18,7 +18,7 @@ class Player : public Agent {
 	int8 p_moveState;
 	b2Timer time;
 
-	void OnPunch();
+	void OnPunch(std::vector<Agent*>& agents);
 public:
 	Player();
 	~Player();
@@ -26,5 +26,5 @@ public:
 	void Init(CapsuleDef* def, Level* thisLvl) override;
 
 	void Draw(Angine::SpriteBatch& spriteBatch) override;
-	void Update(Angine::InputManager& inputManager);
+	void Update(Angine::InputManager& inputManager, std::vector<Agent*>& agents);
 };

@@ -233,7 +233,7 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 		destRect.y = b->GetBody()->GetPosition().y - b->GetDims().y / 2.0f;
 		destRect.w = b->GetDims().x;
 		destRect.z = b->GetDims().y;
-		debugRenderer.DrawBox(destRect, color, 0);
+		debugRenderer.DrawBox(destRect, color, b->GetBody()->GetAngle());
 	}
 	//Static boxes are red
 	for each(Box* b in p_staticBoxes) {
@@ -241,7 +241,7 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 		destRect.y = b->GetBody()->GetPosition().y - b->GetDims().y / 2.0f;
 		destRect.w = b->GetDims().x;
 		destRect.z = b->GetDims().y;
-		debugRenderer.DrawBox(destRect, SColor, 0);
+		debugRenderer.DrawBox(destRect, SColor, b->GetBody()->GetAngle());
 	}
 	for each (Agent* a in p_agents) {
 		a->DrawDebug(debugRenderer);
@@ -249,7 +249,7 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 }
 
 bool Level::Update(Angine::InputManager& inputManager) {
-	p_player->Update(inputManager);
+	p_player->Update(inputManager, p_agents);
 	for (int i = 1; i < p_agents.size(); i++) {
 		((Enemy*)p_agents[i])->Update(p_player, p_agents);
 	}
@@ -284,4 +284,17 @@ std::vector<Box*> Level::IsNearBox(const b2Vec2& checkPos) {
 		}
 	}
 	return nearBoxes;
+}
+
+std::vector<Enemy*> Level::IsNearEnemy(const b2Vec2& checkPos) {
+	std::vector<Enemy*> nearEnemies;
+	b2Vec2 EPos;
+	for (int i = 1; i < p_agents.size(); i++) {
+		EPos = p_agents[i]->GetCapsule().GetBody()->GetPosition();
+		if (floor(checkPos.y) == floor((float)EPos.y) || ceil(checkPos.y) == ceil((float)EPos.y)) {
+			if (floor((float)EPos.x) < floor(checkPos.x) + 1.1f && floor((float)EPos.x) > floor(checkPos.x) - 1.1f)
+				nearEnemies.push_back(static_cast<Enemy*>(p_agents[i]));
+		}
+	}
+	return nearEnemies;
 }

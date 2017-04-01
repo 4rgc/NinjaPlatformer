@@ -15,6 +15,7 @@ void Enemy::Init(CapsuleDef* def, Level* thisLvl) {
 	p_capsule.GetBody()->SetUserData(this);
 	p_texture.Init(texture, glm::ivec2(1, 1));
 	p_direction = 0;
+	p_HP = 60;
 	p_curLvl = thisLvl;
 }
 
@@ -59,7 +60,7 @@ void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
 	}
 
 	const float CONST_SHOOT_INTERVAL = 1000;
-	const float ENEMY_FOV = 10.0f;
+	const float ENEMY_FOV = 6.0f;
 
 	std::mt19937 randEngine(time(NULL));
 	std::uniform_real_distribution<float> randMs(100, 1000);

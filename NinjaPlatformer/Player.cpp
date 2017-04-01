@@ -14,6 +14,7 @@ void Player::Init(CapsuleDef* def, Level* thisLvl) {
 	p_capsule.GetBody()->SetUserData(this);
 	p_texture.Init(texture, glm::ivec2(10,2));
 	p_curLvl = thisLvl;
+	p_HP = 100;
 }
 
 void Player::Draw(Angine::SpriteBatch& spriteBatch) {
@@ -107,7 +108,7 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 	spriteBatch.Draw(destRect, uvRect, p_texture.texture.ID, 0.0f, Angine::ColorRGBA8(255,255,255,255), body->GetAngle());
 }
 
-void Player::Update(Angine::InputManager& inputManager) {
+void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& agents) {
 	float MAX_SPEED = 8.0f;
 	b2Body* body = p_capsule.GetBody();
 	if (inputManager.IsKeyDown(SDLK_a)) {
@@ -125,7 +126,7 @@ void Player::Update(Angine::InputManager& inputManager) {
 		body->ApplyForceToCenter(b2Vec2(0.0f, -60.0f), true);
 	if (inputManager.IsKeyPressed(SDLK_LSHIFT)) {
 		p_isPunching = 1;
-		OnPunch();
+		OnPunch(agents);
 	}
 	if (body->GetLinearVelocity().x < -MAX_SPEED) {
 		body->SetLinearVelocity(b2Vec2(-MAX_SPEED, body->GetLinearVelocity().y));
@@ -162,28 +163,43 @@ void Player::Update(Angine::InputManager& inputManager) {
 		//We can jump
 		if (inputManager.IsKeyPressed(SDLK_SPACE)) {
 			p_jumped = 1;
-			body->ApplyLinearImpulseToCenter(b2Vec2(0.0f, 40.f), true);
+			body->ApplyLinearImpulseToCenter(b2Vec2(0.0f, 35.f), true);
 		}
 	}
 }
 
-void Player::OnPunch() {
-	std::vector<Box*> nearBoxes = p_curLvl->IsNearBox(p_capsule.GetBody()->GetPosition());
-	//TODO: Implement killing enemies
-	if (nearBoxes.empty())
-		return;
-	for (int i = 0; i < nearBoxes.size(); i++) {
-		if (nearBoxes[i]->GetTileID() == 1) {
-			if (p_direction) {
-				if (nearBoxes[i]->GetBody()->GetPosition().x > p_capsule.GetBody()->GetPosition().x) {
-					nearBoxes[i]->GetTileID()--;
-					nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
+void Player::OnPunch(std::vector<Agent*>& agents) {
+	std::vector<Box*> nearBoxes = p_curLvl->IsNearBox(GetPosition());
+	std::vector<Enemy*> nearEnemies = p_curLvl->IsNearEnemy(GetPosition());
+	if (!nearBoxes.empty()) {
+		for (int i = 0; i < nearBoxes.size(); i++) {
+			if (nearBoxes[i]->GetTileID() == 1) {
+				if (p_direction) {
+					if (nearBoxes[i]->GetBody()->GetPosition().x > p_capsule.GetBody()->GetPosition().x) {
+						nearBoxes[i]->GetTileID()--;
+						nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
+					}
+				}
+				else {
+					if (nearBoxes[i]->GetBody()->GetPosition().x < p_capsule.GetBody()->GetPosition().x) {
+						nearBoxes[i]->GetTileID()--;
+						nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(-0.5f, 0.0f), true);
+					}
 				}
 			}
-			else {
-				if (nearBoxes[i]->GetBody()->GetPosition().x < p_capsule.GetBody()->GetPosition().x) {
-					nearBoxes[i]->GetTileID()--;
-					nearBoxes[i]->GetBody()->ApplyLinearImpulseToCenter(b2Vec2(-0.5f, 0.0f), true);
+		}
+	}
+	if (!nearEnemies.empty()) {
+		for each(Enemy* e in nearEnemies) {
+			for (int i = 1; i < agents.size(); i++) {
+				if (e->GetCapsule().GetBody()->GetUserData() ==
+					agents[i]->GetCapsule().GetBody()->GetUserData()) {
+					if (agents[i]->SubtrHP(100)) {
+						agents[i]->Destroy();
+						delete agents[i];
+						agents[i] = agents.back();
+						agents.pop_back();
+					}
 				}
 			}
 		}

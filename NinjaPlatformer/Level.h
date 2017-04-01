@@ -32,6 +32,7 @@ public:
 
 	void SpawnBoxGroup(Box* boxes, int& boxesPos, b2Vec2& position, b2Vec2& dims);
 	std::vector<Box*> IsNearBox(const b2Vec2& checkPos);
+	std::vector<Enemy*> IsNearEnemy(const b2Vec2& checkPos);
 
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
 	const Player* GetPlayerP() const { return p_player; }
