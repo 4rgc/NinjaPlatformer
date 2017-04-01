@@ -7,6 +7,8 @@ class GameplayScreen : public Angine::IGameScreen {
 
 	Angine::DebugRenderer p_debugRenderer;
 	Angine::SpriteBatch* p_spriteBatch;
+	Angine::SpriteBatch p_HUDSpriteBatch;
+	Angine::SpriteFont* p_spriteFont;
 	Angine::GLSLProgram p_textureProgram;
 	Angine::GLSLProgram p_lightProgram;
 	Angine::Camera2D p_MainCamera;
@@ -26,6 +28,9 @@ class GameplayScreen : public Angine::IGameScreen {
 	bool OnExitClicked(const CEGUI::EventArgs& e);
 
 	void CheckInput();
+
+	void DrawWin();
+	void DrawLose();
 public:
 	GameplayScreen(Angine::Window* window);
 	~GameplayScreen();

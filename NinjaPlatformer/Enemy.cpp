@@ -48,17 +48,6 @@ void Enemy::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 }
 
 void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
-
-	//Update the bullets
-	for (int i = 0; i < p_bullets.size(); i++) {
-		if (!p_bullets[i].Update(agents, player)) {
-			p_bullets[i].Destroy();
-			p_bullets[i] = p_bullets.back();
-			p_bullets.pop_back();
-			return;
-		}
-	}
-
 	const float CONST_SHOOT_INTERVAL = 1000;
 	const float ENEMY_FOV = 6.0f;
 
@@ -84,6 +73,16 @@ void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
 					Shoot();
 					p_lastShot.Reset();
 				}
+		}
+	}
+
+	//Update the bullets
+	for (int i = 0; i < p_bullets.size(); i++) {
+		if (!p_bullets[i].Update(agents, player)) {
+			p_bullets[i].Destroy();
+			p_bullets[i] = p_bullets.back();
+			p_bullets.pop_back();
+			return;
 		}
 	}
 

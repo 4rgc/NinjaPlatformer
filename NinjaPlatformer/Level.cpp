@@ -265,10 +265,11 @@ int Level::Update(Angine::InputManager& inputManager) {
 	p_player->Update(inputManager, p_agents);
 	for (int i = 1; i < p_agents.size(); i++) {
 		((Enemy*)p_agents[i])->Update(p_player, p_agents);
+		if(!p_player)
+			return -1;
 	}
 	if (p_player)
 		return false || (!GetEnemiesLeft());
-	return -1;
 }
 
 void Level::Destroy() {

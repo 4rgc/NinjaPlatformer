@@ -5,6 +5,8 @@ class MainMenuScreen : public Angine::IGameScreen{
 	Angine::Window* p_window;
 	Angine::GUI p_GUI;
 	Angine::SpriteBatch p_spriteBatch;
+	Angine::SpriteBatch p_HUDSpriteBatch;
+	Angine::SpriteFont* p_spriteFont;
 	Angine::GLSLProgram p_textureProgram;
 
 	float p_xOffset;

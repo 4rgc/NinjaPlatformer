@@ -7,9 +7,6 @@ GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_window(window)
 				  {
 	p_screenIndex = SCREEN_INDEX_GAMEPLAY;	
-	//Initialize the spritebatch
-	p_spriteBatch = new Angine::SpriteBatch();
-	p_spriteBatch->Init();
 
 	//Shaders Init
 	//Compile texture shaders
@@ -24,6 +21,13 @@ GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_lightProgram.AddAttribute("vertexColor");
 	p_lightProgram.AddAttribute("vertexUV");
 	p_lightProgram.LinkShaders();
+
+	//Initialize the spritebatch
+	p_spriteBatch = new Angine::SpriteBatch();
+	p_spriteBatch->Init();
+	p_HUDSpriteBatch.Init();
+
+	p_spriteFont = new Angine::SpriteFont("Fonts/BalooBhaina.ttf", 64);
 
 	//Init the debugRenderer
 	p_debugRenderer.Init();
@@ -151,8 +155,14 @@ void GameplayScreen::Update() {
 	CheckInput();
 	p_GUI.Update();
 	if (int a = p_curLvl.Update(p_game->inputManager)) {
-		if (a == 1)
-			p_levelIndex++;
+		if (a == 1) {
+			if(p_levelIndex != p_levelPaths.size()-1)
+				p_levelIndex++;
+			DrawWin();
+		}
+		else {
+			DrawLose();
+		}
 		p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
 		p_player = nullptr;
 		return;
@@ -240,4 +250,54 @@ void GameplayScreen::CheckInput() {
 		p_game->OnSDLEvent(evnt);
 		p_GUI.OnSDLEvent(evnt);
 	}
+}
+
+void GameplayScreen::DrawWin() {
+	p_textureProgram.Use();
+
+	//Upload texture Uniforms
+	GLint textureUniform = p_textureProgram.GetUniformLocation("mySampler");
+	glUniform1i(textureUniform, 0);
+	glActiveTexture(GL_TEXTURE0);
+
+	glm::mat4 projectionMatrix = p_MainCamera.GetMatrix();
+	GLint pUniform = p_textureProgram.GetUniformLocation("transformationMatrix");
+	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
+
+	p_HUDSpriteBatch.Begin();
+
+	p_spriteFont->draw(p_HUDSpriteBatch, "You won!", glm::vec2(p_MainCamera.GetPosition().x, p_MainCamera.GetPosition().y + 1.5f), glm::vec2(0.045f, 0.03f), 0.0f, Angine::ColorRGBA8(0,200,0,255),Angine::Justification::MIDDLE);
+
+	p_HUDSpriteBatch.End();
+	p_HUDSpriteBatch.RenderBatch();
+
+	p_textureProgram.UnUse();
+
+	p_window->SwapBuffer();
+	SDL_Delay(1500);
+}
+
+void GameplayScreen::DrawLose() {
+	p_textureProgram.Use();
+
+	//Upload texture Uniforms
+	GLint textureUniform = p_textureProgram.GetUniformLocation("mySampler");
+	glUniform1i(textureUniform, 0);
+	glActiveTexture(GL_TEXTURE0);
+
+	glm::mat4 projectionMatrix = p_MainCamera.GetMatrix();
+	GLint pUniform = p_textureProgram.GetUniformLocation("transformationMatrix");
+	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
+
+	p_HUDSpriteBatch.Begin();
+
+	p_spriteFont->draw(p_HUDSpriteBatch, "You lose!", glm::vec2(p_MainCamera.GetPosition().x, p_MainCamera.GetPosition().y + 1.5f), glm::vec2(0.045f, 0.03f), 0.0f, Angine::ColorRGBA8(180, 0, 0, 255), Angine::Justification::MIDDLE);
+	
+	p_HUDSpriteBatch.End();
+	p_HUDSpriteBatch.RenderBatch();
+	
+	p_textureProgram.UnUse();
+
+	p_window->SwapBuffer();
+	SDL_Delay(1500);
 }

@@ -13,6 +13,9 @@ MainMenuScreen::MainMenuScreen(Angine::Window* window) :
 	p_textureProgram.LinkShaders();
 
 	p_spriteBatch.Init();
+	p_HUDSpriteBatch.Init();
+
+	p_spriteFont = new Angine::SpriteFont("Fonts/BalooBhaina.ttf", 64);
 }
 
 MainMenuScreen::~MainMenuScreen() {
@@ -127,6 +130,13 @@ void MainMenuScreen::Draw() {
 
 	p_spriteBatch.End();
 	p_spriteBatch.RenderBatch();
+
+	p_HUDSpriteBatch.Begin();
+
+	p_spriteFont->draw(p_HUDSpriteBatch, "Ninja Platformer", glm::vec2(p_MainCamera.GetPosition().x, p_MainCamera.GetPosition().y + 1.5f), glm::vec2(0.04f, 0.03f), 0.0f, Angine::ColorRGBA8(0, 0, 180, 255), Angine::Justification::MIDDLE);
+
+	p_HUDSpriteBatch.End();
+	p_HUDSpriteBatch.RenderBatch();
 
 	p_textureProgram.UnUse();
 
