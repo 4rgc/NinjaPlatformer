@@ -81,7 +81,7 @@ void GameplayScreen::OnEntry() {
 
 	//Init camera
 	p_MainCamera.Init(p_window->getScreenW(), p_window->getScreenH());
-	p_MainCamera.SetScale(48.0f);
+	p_MainCamera.SetScale(52.0f);
 
 
 	//Init the level and player
@@ -99,14 +99,19 @@ void GameplayScreen::InitUI() {
 	p_GUI.Init("GUI");
 	p_GUI.LoadScheme("TaharezLook.scheme");
 	p_GUI.SetFont("DejaVuSans-10");
+	//Exit button
 	CEGUI::PushButton* exitButton = static_cast<CEGUI::PushButton*>(p_GUI.CreateWidget("TaharezLook/Button", glm::vec4(0.05f, 0.05f, 0.1f, 0.05f), glm::vec4(0.0f), "TestButton"));
 	exitButton->setText("Exit Game");
+	//Enemies left label
 	CEGUI::DefaultWindow* leftLabel = static_cast<CEGUI::DefaultWindow*>(p_GUI.CreateWidget("TaharezLook/Label", glm::vec4(0.2f, 0.05f, 0.3f, 0.05f), glm::vec4(0.0f), "EnemiesLeftLabel"));
-	leftLabel->setText((CEGUI::String)std::string("Enemies left: " + std::to_string(p_curLvl.GetEnemiesLeft())));
 	p_updGUI.push_back(leftLabel);
+	//HP left label
+	CEGUI::DefaultWindow* HPLabel = static_cast<CEGUI::DefaultWindow*>(p_GUI.CreateWidget("TaharezLook/Label", glm::vec4(0.4f, 0.05f, 0.3f, 0.05f), glm::vec4(0.0f), "HPLabel"));
+	p_updGUI.push_back(HPLabel);
 	//Lambda for level stat updating
 	p_GUI.CustomUpdate = [windows = p_updGUI, &level = p_curLvl]() ->void{
 		windows[0]->setText("Enemies left: " + std::to_string(level.GetEnemiesLeft()));
+		windows[1]->setText("HP: " + std::to_string(level.GetPlayerP()->GetHP()));
 	};
 
 	//Set the event to be called when we click
@@ -125,6 +130,8 @@ bool GameplayScreen::OnExitClicked(const CEGUI::EventArgs& e) {
 
 void GameplayScreen::OnExit() {
 	p_curLvl.Destroy();
+	p_GUI.Destroy();
+	p_updGUI.clear();
 }
 
 void GameplayScreen::Update() {

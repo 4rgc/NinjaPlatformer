@@ -91,7 +91,7 @@ void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
 
 void Enemy::Shoot() {
 	Bullet b;
-	BulletDef bDef(p_capsule.GetBody()->GetWorld(), GetPosition(), p_direction, 20, 20);
+	BulletDef bDef(p_capsule.GetBody()->GetWorld(), GetPosition(), p_direction, 40, 20);
 	b.Spawn(&bDef, this);
 	p_bullets.push_back(b);
 }

@@ -4,6 +4,11 @@ class MainMenuScreen : public Angine::IGameScreen{
 	Angine::Camera2D p_MainCamera;
 	Angine::Window* p_window;
 	Angine::GUI p_GUI;
+	Angine::SpriteBatch p_spriteBatch;
+	Angine::GLSLProgram p_textureProgram;
+
+	float p_xOffset;
+	float p_yOffset;
 
 	int p_nextScreenIndex = SCREEN_INDEX_GAMEPLAY;
 

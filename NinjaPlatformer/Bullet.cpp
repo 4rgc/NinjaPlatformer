@@ -14,13 +14,13 @@ void Bullet::Spawn(const BulletDef* def, Agent* parent) {
 	ttl = def->ttl;
 	timer.Reset();
 	p_parent = parent;
-	b2Vec2 impulse = (p_direction?b2Vec2(15.0f, 0.0f):b2Vec2(-15.0f, 0.0f));
+	b2Vec2 impulse = (p_direction ? b2Vec2(13.0f, 0.0f) : b2Vec2(-13.0f, 0.0f));
 	p_box->GetBody()->ApplyLinearImpulseToCenter(impulse, true);
 }
 
 void Bullet::Draw(Angine::SpriteBatch& spriteBatch) {
-	if(p_box->GetBody())
-	p_box->Draw(spriteBatch);
+	if (p_box->GetBody())
+		p_box->Draw(spriteBatch);
 }
 
 void Bullet::DrawDebug(Angine::DebugRenderer& debugRenderer) {
@@ -29,13 +29,13 @@ void Bullet::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 	destRect.y = p_box->GetBody()->GetPosition().y - p_box->GetDims().y / 2.0f;
 	destRect.w = p_box->GetDims().x;
 	destRect.z = p_box->GetDims().y;
-	debugRenderer.DrawBox(destRect, Angine::ColorRGBA8(128,255,128,255), p_box->GetBody()->GetAngle());
+	debugRenderer.DrawBox(destRect, Angine::ColorRGBA8(128, 255, 128, 255), p_box->GetBody()->GetAngle());
 }
 
 bool Bullet::Update(std::vector<Agent*>& agents, Player*& playerPtr) {
-	//TODO: Change damage over time, depending on bullet's velocity and "time to live"
 	if (!p_box->GetBody())
 		return false;
+	p_damage -= 1;
 	if (b2ContactEdge* ce = p_box->GetBody()->GetContactList()) {
 		bool touching = false;
 		for (ce; ce; ce = ce->next) {
