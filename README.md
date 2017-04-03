@@ -14,4 +14,10 @@ The solution is set to get all the includes from "$(SolutionDir)/libs/include"<b
 <b>/NinjaPlatformer</b> - the actual game folder. <br />
 All the game physics and mechanics are in here.
 <br /><br />
-<i>Currently <b>5099</b> lines of code</i>
+<b>Installation</b><br />
+<b>1.</b> Put everything from the cloned repo into one folder <br />
+<b>2.</b> Extract and merge the libs.zip to <i>*your_project_path*/</i> <br />
+<b>3.</b> Extract contents of bin_Debug.zip into <i>*your_project_path*/Debug</i> <br />
+<b>4.</b> Extract contents of bin_Release.zip into <i>*your_project_path*/Release</i>
+<br /><br />
+<i>Currently there are <b>5099</b> lines of code</i>

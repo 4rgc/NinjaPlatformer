@@ -1,5 +1,7 @@
 #pragma once
 
+const float SBOX_DIMS = 1.0f;
+
 class Level {
 	const Angine::Window* p_window = nullptr;
 	const Angine::Camera2D* p_camera = nullptr;
@@ -38,6 +40,7 @@ public:
 	const Player* GetPlayerP() const { return p_player; }
 	int GetEnemiesLeft() const { return p_agents.size() - 1; }
 	float GetRightCameraPoint() { return p_levelData[0].size(); }
+	bool NextGroundBoxExists(const b2Vec2& pos, bool dir);
 
 	Level operator=(Level&& obj);
 	Level &operator=(const Level& obj);

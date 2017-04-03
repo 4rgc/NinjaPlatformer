@@ -134,6 +134,7 @@ void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& age
 	else if (body->GetLinearVelocity().x > MAX_SPEED) {
 		body->SetLinearVelocity(b2Vec2(MAX_SPEED, body->GetLinearVelocity().y));
 	}
+	//std::cout << p_curLvl->NextGroundBoxExists(b2Vec2(GetPosition().x, GetPosition().y - p_capsule.GetDims().y/2.0f - SBOX_DIMS/2.0f), p_direction) << "\n";
 	p_isGrounded = 0;
 	//Loop througn the contact points
 	bool below = false;

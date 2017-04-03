@@ -100,14 +100,14 @@ void Level::Init() {
 		for (int j = 0; j < p_levelData[i].size(); j++) {
 			switch (p_levelData[i][j]) {
 				case 'W':
-					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(1.0f, 1.0f));
+					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(SBOX_DIMS, SBOX_DIMS));
 					sBoxes[iSBox].Init(&bDef, true, true, p_tileSheet.texture, p_tileSheet.getUV(14));
 					sBoxes[iSBox].SetColor(Angine::ColorRGBA8(120,120,120,255));
 					p_staticBoxes.push_back(&sBoxes[iSBox]);
 					iSBox++;
 					break;
 				case 'O': 
-					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset + 0.05f), b2Vec2(1.0f, 0.9f));
+					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset + 0.05f), b2Vec2(SBOX_DIMS, SBOX_DIMS - 0.1f));
 					sBoxes[iSBox].Init(&bDef, true, true, p_tileSheet.texture, p_tileSheet.getUV(17));
 					sBoxes[iSBox].SetColor(Angine::ColorRGBA8(140, 140, 140, 255));
 					p_staticBoxes.push_back(&sBoxes[iSBox]);
@@ -164,6 +164,26 @@ void Level::SpawnBoxGroup(Box* boxes, int& boxesPos, b2Vec2 & position, b2Vec2 &
 	boxes[boxesPos].Init(&bDef, false, false, p_boxSheet.texture, p_boxSheet.getUV(0));
 	p_boxes.push_back(&boxes[boxesPos]);
 	boxesPos++;
+}
+
+bool Level::NextGroundBoxExists(const b2Vec2& pos, bool dir) {
+	if (dir) {
+		if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS] == 'O')
+			return true;
+		else if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS] == 'W')
+			return true;
+		else
+			return false;
+	}
+	else {
+		if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS] == 'O')
+			return true;
+		else if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS] == 'W')
+			return true;
+		else
+			return false;
+	}
+	return false;
 }
 
 Level Level::operator=(Level&& obj) {
