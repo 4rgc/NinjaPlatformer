@@ -15,7 +15,7 @@ class Player : public Agent {
 	bool p_isPunching = 0;
 	bool p_jumped = 0 ;
 	int p_framesSinceGrounded;
-	int8 p_moveState;
+	PMoveState p_moveState;
 	b2Timer time;
 
 	void OnPunch(std::vector<Agent*>& agents);

@@ -36,8 +36,8 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 		if (p_isPunching) {
 			numTiles = 4;
 			tileIndex = 1;
-			if (p_moveState != (int)PMoveState::PUNCHING) {
-				p_moveState = (int)PMoveState::PUNCHING;
+			if (p_moveState != PMoveState::PUNCHING) {
+				p_moveState = PMoveState::PUNCHING;
 				p_animTime = 0.0f;
 			}
 		}
@@ -46,8 +46,8 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 			numTiles = 6;
 			tileIndex = 10;
 			animationSpeed = abs(velocity.x) * 0.018f;
-			if (p_moveState != (int)PMoveState::RUNNING) {
-				p_moveState = (int)PMoveState::RUNNING;
+			if (p_moveState != PMoveState::RUNNING) {
+				p_moveState = PMoveState::RUNNING;
 				p_animTime = 0.0f;
 			}
 		}
@@ -55,7 +55,7 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 			//standing
 			numTiles = 1;
 			tileIndex = 0;
-			p_moveState &= (int)PMoveState::STANDING;
+			p_moveState = PMoveState::STANDING;
 		}
 	}
 	else { 
@@ -63,8 +63,8 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 			numTiles = 1;
 			tileIndex = 18;
 			animationSpeed *= 0.25f;
-			if (p_moveState != (int)PMoveState::PUNCHING) {
-				p_moveState = (int)PMoveState::PUNCHING;
+			if (p_moveState != PMoveState::PUNCHING) {
+				p_moveState = PMoveState::PUNCHING;
 				p_animTime = 0.0f;
 			}
 		}
@@ -76,13 +76,13 @@ void Player::Draw(Angine::SpriteBatch& spriteBatch) {
 			//falling
 			numTiles = 1;
 			tileIndex = 17;
-			p_moveState = (int)PMoveState::IN_AIR;
+			p_moveState = PMoveState::IN_AIR;
 		}
 		else {
 			//rising
 			numTiles = 1;
 			tileIndex = 16;
-			p_moveState = (int)PMoveState::IN_AIR;
+			p_moveState = PMoveState::IN_AIR;
 		}
 	}
 
@@ -159,7 +159,7 @@ void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& age
 		}
 	}
 	//You can jump 200ms after you got off the ground
-	if ((p_isGrounded || time.GetMilliseconds() < 200.0f) && p_jumped == false) {
+	if ((p_isGrounded || time.GetMilliseconds() < 150.0f) && p_jumped == false) {
 		//We can jump
 		if (inputManager.IsKeyPressed(SDLK_SPACE)) {
 			p_jumped = 1;
