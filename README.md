@@ -20,4 +20,4 @@ All the game physics and mechanics are in here.
 <b>3.</b> Extract contents of bin_Debug.zip into <i>*your_project_path*/Debug</i> <br />
 <b>4.</b> Extract contents of bin_Release.zip into <i>*your_project_path*/Release</i>
 <br /><br />
-<i>Currently there are <b>5099</b> lines of code</i>
+<i>Currently there are <b>5159</b> lines of code</i>
