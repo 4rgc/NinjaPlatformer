@@ -85,7 +85,7 @@ namespace Angine {
 	void SpriteBatch::End() {
 		//set up pointers for sorting
 		p_glyphPointers.resize(p_glyphs.size());
-		for (int i = 0; i < p_glyphs.size(); i++) {
+		for (size_t i = 0; i < p_glyphs.size(); i++) {
 			p_glyphPointers[i] = &p_glyphs[i];
 		}
 		SortGlyphs();

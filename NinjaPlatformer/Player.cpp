@@ -120,7 +120,7 @@ void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& age
 		p_direction = 1;
 	}
 	else {
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x * 0.95, body->GetLinearVelocity().y));
+		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x * 0.95f, body->GetLinearVelocity().y));
 	}
 	if (inputManager.IsKeyDown(SDLK_s))
 		body->ApplyForceToCenter(b2Vec2(0.0f, -60.0f), true);
@@ -172,7 +172,7 @@ void Player::OnPunch(std::vector<Agent*>& agents) {
 	std::vector<Box*> nearBoxes = p_curLvl->IsNearBox(GetPosition());
 	std::vector<Enemy*> nearEnemies = p_curLvl->IsNearEnemy(GetPosition());
 	if (!nearBoxes.empty()) {
-		for (int i = 0; i < nearBoxes.size(); i++) {
+		for (size_t i = 0; i < nearBoxes.size(); i++) {
 			if (nearBoxes[i]->GetTileID() == 1) {
 				if (p_direction) {
 					if (nearBoxes[i]->GetBody()->GetPosition().x > p_capsule.GetBody()->GetPosition().x) {
@@ -190,8 +190,8 @@ void Player::OnPunch(std::vector<Agent*>& agents) {
 		}
 	}
 	if (!nearEnemies.empty()) {
-		for (int i = 0; i < nearEnemies.size(); i++) {
-			for (int j = 1; j < agents.size(); j++) {
+		for (size_t i = 0; i < nearEnemies.size(); i++) {
+			for (size_t j = 1; j < agents.size(); j++) {
 				if (nearEnemies[i]->GetCapsule().GetBody()->GetUserData() ==
 					agents[j]->GetCapsule().GetBody()->GetUserData()) {
 					if (agents[j]->SubtrHP(100)) {

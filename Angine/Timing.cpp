@@ -34,7 +34,7 @@ namespace Angine {
 		static float prevTicks = (float)SDL_GetTicks();
 		float curTicks;
 		curTicks = (float)SDL_GetTicks();
-		p_frameTime = (float)(curTicks - prevTicks);
+		p_frameTime = (int)(curTicks - prevTicks);
 		frameTimes[curFrame%NUM_SAMPLES] = (float)p_frameTime;
 
 		prevTicks = curTicks;

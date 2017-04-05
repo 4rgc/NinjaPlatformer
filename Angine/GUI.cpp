@@ -196,7 +196,7 @@ void GUI::OnSDLEvent(SDL_Event & evnt) {
 	CEGUI::utf32 codePoint;
 	switch (evnt.type) {
 	case SDL_MOUSEMOTION:
-		p_context->injectMousePosition(evnt.motion.x, evnt.motion.y);
+		p_context->injectMousePosition((float)evnt.motion.x, (float)evnt.motion.y);
 		break;
 	case SDL_KEYDOWN:
 		p_context->injectKeyDown(SDLKeyToCEGUIKey(evnt.key.keysym.sym));

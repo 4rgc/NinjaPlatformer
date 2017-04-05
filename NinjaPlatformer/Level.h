@@ -39,7 +39,7 @@ public:
 	const b2Vec2& GetStartPlayerPos() const { return p_startPlayerPos; }
 	const Player* GetPlayerP() const { return p_player; }
 	int GetEnemiesLeft() const { return p_agents.size() - 1; }
-	float GetRightCameraPoint() { return p_levelData[0].size(); }
+	float GetRightCameraPoint() { return (float)p_levelData[0].size(); }
 	bool NextGroundBoxExists(const b2Vec2& pos, bool dir);
 
 	Level operator=(Level&& obj);

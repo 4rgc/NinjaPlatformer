@@ -62,7 +62,7 @@ void GameplayScreen::OnEntry() {
 	b2Vec2 gravity(0.0f, -30.0f);
 	p_world = std::make_unique<b2World>(gravity);
 
-	std::mt19937 randEngine(time(NULL));
+	std::mt19937 randEngine((unsigned int)time(NULL));
 	std::uniform_real_distribution<float> xPos(-10.0f, 10.0f);
 	std::uniform_real_distribution<float> yPos(-10.0f, 15.0f);
 	std::uniform_int_distribution<int> color(0, 120);

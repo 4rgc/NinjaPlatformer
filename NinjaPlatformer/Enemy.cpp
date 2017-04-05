@@ -36,14 +36,14 @@ void Enemy::Draw(Angine::SpriteBatch & spriteBatch) {
 	}
 	spriteBatch.Draw(destRect, uvRect, p_texture.texture.ID, 0.0f, Angine::ColorRGBA8(255, 255, 255, 255), body->GetAngle());
 
-	for (int i = 0; i < p_bullets.size(); i++) {
+	for (size_t i = 0; i < p_bullets.size(); i++) {
 		p_bullets[i].Draw(spriteBatch);
 	}
 }
 
 void Enemy::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 	p_capsule.DrawDebug(debugRenderer);
-	for (int i = 0; i < p_bullets.size(); i++) {
+	for (size_t i = 0; i < p_bullets.size(); i++) {
 		p_bullets[i].DrawDebug(debugRenderer);
 	}
 }
@@ -61,7 +61,7 @@ void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
 	const float CONST_SHOOT_INTERVAL = 1000;
 	const float ENEMY_FOV = 6.0f;
 
-	std::mt19937 randEngine(time(NULL));
+	std::mt19937 randEngine((unsigned int)time(NULL));
 	std::uniform_real_distribution<float> randMs(100, 1000);
 	
 	if (floor(player->GetPosition().y) == floor(GetPosition().y) ||	 ///< If player and enemy are on same height
@@ -87,7 +87,7 @@ void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
 	}
 
 	//Update the bullets
-	for (int i = 0; i < p_bullets.size(); i++) {
+	for (size_t i = 0; i < p_bullets.size(); i++) {
 		if (!p_bullets[i].Update(agents, player)) {
 			p_bullets[i].Destroy();
 			p_bullets[i] = p_bullets.back();

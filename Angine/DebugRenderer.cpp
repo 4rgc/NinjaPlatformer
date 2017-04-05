@@ -142,7 +142,7 @@ void DebugRenderer::DrawCircle(const glm::vec2& center, const ColorRGBA8& color,
 	int start = p_verts.size();
 	p_verts.resize(p_verts.size() + NUM_VERTS);
 	for (int i = 0; i < NUM_VERTS; i++) {
-		float angle = ((float)i / NUM_VERTS) * M_PI * 2.0f;
+		float angle = ((float)i / NUM_VERTS) * (float)M_PI * 2.0f;
 		p_verts[start + i].position.x = cos(angle) * radius + center.x;
 		p_verts[start + i].position.y = sin(angle) * radius + center.y;
 		p_verts[start + i].color = color;

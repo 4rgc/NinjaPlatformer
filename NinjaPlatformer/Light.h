@@ -12,7 +12,7 @@ public:
 		destRect.y = position.y - size / 2.0f;
 		destRect.z = size;
 		destRect.w = size;
-		spriteBatch.Draw(destRect, glm::vec4(-1.0f, -1.0f, 2.0f, 2.0f), 0.0f, 0.0f, color, 0);
+		spriteBatch.Draw(destRect, glm::vec4(-1.0f, -1.0f, 2.0f, 2.0f), GLuint(0), 0.0f, color, 0);
 	}
 
 };

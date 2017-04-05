@@ -30,17 +30,17 @@ void Level::Load(const std::string& levelPath) {
 		pNLine = nLine;
 	}
 
-	for (int i = 0; i < p_levelData.size(); i++) {
+	for (size_t i = 0; i < p_levelData.size(); i++) {
 		p_levelData[i].erase(std::remove(p_levelData[i].begin(), p_levelData[i].end(), '\n'), p_levelData[i].end());
 	}
-	for (int i = 0; i < p_levelData.size(); i++) {
+	for (size_t i = 0; i < p_levelData.size(); i++) {
 		p_levelData[i].erase(std::remove(p_levelData[i].begin(), p_levelData[i].end(), '\r'), p_levelData[i].end());
 	}
 
 	bool found = false;
-	for (int i = 0; i < p_levelData.size(); i++) {
+	for (size_t i = 0; i < p_levelData.size(); i++) {
 		if(!found)
-		for (int j = 0; j < p_levelData[i].size(); j++) {
+		for (size_t j = 0; j < p_levelData[i].size(); j++) {
 			if (p_levelData[i][j] == 'P') {
 				p_startPlayerPos = b2Vec2(j + xOffset, i + yOffset);
 				found = true;
@@ -59,7 +59,6 @@ void Level::Init() {
 	p_tileSheet.Init(Angine::ResourceManager::GetTexture("Textures/textures/tiles.png"), glm::ivec2(8, 8));
 	p_boxSheet.Init(Angine::ResourceManager::GetTexture("Textures/textures/boxsheet.png"), glm::ivec2(8, 1));
 
-	Box *box;
 	BoxDef bDef(p_world);
 	b2Vec2 pos;
 	b2Vec2 dims;
@@ -74,8 +73,8 @@ void Level::Init() {
 	p_agents.push_back(p_player);
 
 	//Count quantity of all boxes in the level to allocate cache-friendly memory
-	for (int i = 0; i < p_levelData.size(); i++) {
-		for (int j = 0; j < p_levelData[i].size(); j++) {
+	for (size_t i = 0; i < p_levelData.size(); i++) {
+		for (size_t j = 0; j < p_levelData[i].size(); j++) {
 			switch (p_levelData[i][j]) {
 			case 'W':
 				sCount++;
@@ -96,8 +95,8 @@ void Level::Init() {
 	sBoxes = new Box[sCount];
 
 	int iBox = 0, iSBox = 0;
-	for (int i = 0; i < p_levelData.size(); i++) {
-		for (int j = 0; j < p_levelData[i].size(); j++) {
+	for (size_t i = 0; i < p_levelData.size(); i++) {
+		for (size_t j = 0; j < p_levelData[i].size(); j++) {
 			switch (p_levelData[i][j]) {
 				case 'W':
 					bDef = BoxDef(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(SBOX_DIMS, SBOX_DIMS));
@@ -180,17 +179,17 @@ void Level::SpawnBoxGroup(Box* boxes, int& boxesPos, b2Vec2 & position, b2Vec2 &
 
 bool Level::NextGroundBoxExists(const b2Vec2& pos, bool dir) {
 	if (dir) {
-		if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS + dir] == 'O')
+		if (p_levelData[unsigned int(pos.y - yOffset)][unsigned int(pos.x - xOffset + SBOX_DIMS + dir)] == 'O')
 			return true;
-		else if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS + dir] == 'W')
+		else if (p_levelData[unsigned int(pos.y - yOffset)][unsigned int(pos.x - xOffset + SBOX_DIMS + dir)] == 'W')
 			return true;
 		else
 			return false;
 	}
 	else {
-		if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS - dir] == 'O')
+		if (p_levelData[unsigned int(pos.y - yOffset)][unsigned int(pos.x - xOffset - SBOX_DIMS - dir)] == 'O')
 			return true;
-		else if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS - dir] == 'W')
+		else if (p_levelData[unsigned int(pos.y - yOffset)][unsigned int(pos.x - xOffset - SBOX_DIMS - dir)] == 'W')
 			return true;
 		else
 			return false;
@@ -234,7 +233,7 @@ void Level::Draw(Angine::Camera2D& camera, Angine::SpriteBatch& spriteBatch) {
 	//Draw the boxes
 	spriteBatch.Begin();
 	//dynamic
-	for (int i = 0; i < p_boxes.size(); ) {
+	for (size_t i = 0; i < p_boxes.size(); ) {
 		//Draw boxes only if they are in vision 
 		if (p_boxes[i]->GetBody()->GetPosition().x > camera.GetPosition().x + xOffset - 1.5f ||
 			p_boxes[i]->GetBody()->GetPosition().x < camera.GetPosition().x - xOffset + 1.5f) {
@@ -295,7 +294,7 @@ void Level::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 
 int Level::Update(Angine::InputManager& inputManager) {
 	p_player->Update(inputManager, p_agents);
-	for (int i = 1; i < p_agents.size(); i++) {
+	for (size_t i = 1; i < p_agents.size(); i++) {
 		((Enemy*)p_agents[i])->Update(p_player, p_agents);
 		if(!p_player)
 			return -1;
@@ -304,6 +303,7 @@ int Level::Update(Angine::InputManager& inputManager) {
 		p_player = nullptr;
 	if (p_player)
 		return false || (!GetEnemiesLeft());
+	return true;
 }
 
 void Level::Destroy() {
@@ -337,7 +337,7 @@ std::vector<Box*> Level::IsNearBox(const b2Vec2& checkPos) {
 std::vector<Enemy*> Level::IsNearEnemy(const b2Vec2& checkPos) {
 	std::vector<Enemy*> nearEnemies;
 	b2Vec2 EPos;
-	for (int i = 1; i < p_agents.size(); i++) {
+	for (size_t i = 1; i < p_agents.size(); i++) {
 		EPos = p_agents[i]->GetCapsule().GetBody()->GetPosition();
 		if (floor(checkPos.y) == floor((float)EPos.y) || ceil(checkPos.y) == ceil((float)EPos.y)) {
 			if (floor((float)EPos.x) < floor(checkPos.x) + 1.1f && floor((float)EPos.x) > floor(checkPos.x) - 1.1f)

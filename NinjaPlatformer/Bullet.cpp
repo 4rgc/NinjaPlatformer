@@ -7,9 +7,9 @@ void Bullet::Spawn(const BulletDef* def, Agent* parent) {
 	BoxDef bDef(def->world, b2Vec2(def->position.x + (def->direction ? 1.0f : -1.0f), def->position.y), b2Vec2(0.5f, 0.5f));
 	p_box->Init(&bDef, false, false, Angine::ResourceManager::GetTexture("Textures/textures/bullet.png"));
 	p_direction = def->direction;
-	std::mt19937 randEngine(time(NULL));
-	std::uniform_real_distribution<float> angle(-M_PI / 18.0f, M_PI / 18.0f);
-	p_box->GetBody()->SetTransform(p_box->GetPosition(), M_PI);
+	std::mt19937 randEngine((unsigned int)time(NULL));
+	std::uniform_real_distribution<float> angle((float)-M_PI / 18.0f, (float)M_PI / 18.0f);
+	p_box->GetBody()->SetTransform(p_box->GetPosition(), (float32)M_PI);
 	p_damage = def->startDamage;
 	ttl = def->ttl;
 	timer.Reset();
@@ -41,7 +41,7 @@ bool Bullet::Update(std::vector<Agent*>& agents, Player*& playerPtr) {
 		for (ce; ce; ce = ce->next) {
 			if (ce->contact->IsTouching()) {
 				//touching = true;
-				for (int i = 0; i < agents.size(); i++) {
+				for (size_t i = 0; i < agents.size(); i++) {
 					//If we are on parent, continue looping
 					if (agents[i]->GetCapsule().GetBody()->GetUserData() == p_parent->GetCapsule().GetBody()->GetUserData()) {
 						continue;
