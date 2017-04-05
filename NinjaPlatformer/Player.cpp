@@ -134,7 +134,10 @@ void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& age
 	else if (body->GetLinearVelocity().x > MAX_SPEED) {
 		body->SetLinearVelocity(b2Vec2(MAX_SPEED, body->GetLinearVelocity().y));
 	}
-	//std::cout << p_curLvl->NextGroundBoxExists(b2Vec2(GetPosition().x, GetPosition().y - p_capsule.GetDims().y/2.0f - SBOX_DIMS/2.0f), p_direction) << "\n";
+
+	//(temp) Just gave a check to the NextGroundBoxExists method 
+	std::cout << p_curLvl->NextGroundBoxExists(b2Vec2(GetPosition().x, GetPosition().y - p_capsule.GetDims().y/2.0f - SBOX_DIMS/2.0f), p_direction) << "\n";
+
 	p_isGrounded = 0;
 	//Loop througn the contact points
 	bool below = false;
@@ -151,8 +154,8 @@ void Player::Update(Angine::InputManager& inputManager, std::vector<Agent*>& age
 					manifold.points[i].x > body->GetPosition().x - p_capsule.GetDims().x / 2.0f + 0.01f) {
 					below = true;
 					p_isGrounded = 1;
-					if(time.GetMilliseconds() > 100.0f)
-					p_jumped = 0;
+					if(time.GetMilliseconds() > 50.0f)
+						p_jumped = 0;
 					time.Reset();
 					break;
 				}

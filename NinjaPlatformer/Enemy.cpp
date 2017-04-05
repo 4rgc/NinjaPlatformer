@@ -22,7 +22,7 @@ void Enemy::Init(CapsuleDef* def, Level* thisLvl) {
 void Enemy::Draw(Angine::SpriteBatch & spriteBatch) {
 	glm::vec4 destRect;
 	b2Body *body = p_capsule.GetBody();
-	destRect.x = body->GetPosition().x - p_capsule.GetDrawDims().x / 2.0f - 0.2f;
+	destRect.x = body->GetPosition().x - p_capsule.GetDrawDims().x / 2.0f + (p_direction ? 0.2f:-0.2f);
 	destRect.y = body->GetPosition().y - p_capsule.GetDims().y / 2.0f;
 	destRect.z = p_capsule.GetDrawDims().x;
 	destRect.w = p_capsule.GetDrawDims().y; 

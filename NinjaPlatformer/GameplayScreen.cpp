@@ -1,7 +1,7 @@
 #include "Header.h"
 #include <stdarg.h>
 
-#define NO_DEBUG_RENDER
+#define DEBUG_RENDER
 
 GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_window(window)
