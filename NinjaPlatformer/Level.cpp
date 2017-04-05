@@ -303,7 +303,7 @@ int Level::Update(Angine::InputManager& inputManager) {
 		p_player = nullptr;
 	if (p_player)
 		return false || (!GetEnemiesLeft());
-	return true;
+	return -1;
 }
 
 void Level::Destroy() {
