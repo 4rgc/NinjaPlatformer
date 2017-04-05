@@ -36,6 +36,7 @@ void MainMenuScreen::InitUI() {
 	editorButton->setText("Level Editor");
 	//Set the event to be calles when we click
 	editorButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&MainMenuScreen::OnEditorClicked, this));
+	editorButton->disable();
 
 	CEGUI::PushButton* exitButton = static_cast<CEGUI::PushButton*>(p_GUI.CreateWidget("TaharezLook/Button", glm::vec4(0.5f - 0.075f, 0.7f, 0.15f, 0.06f), glm::vec4(0.0f), "ExitButton"));
 	exitButton->setText("Exit game");

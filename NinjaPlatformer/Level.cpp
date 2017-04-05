@@ -129,6 +129,7 @@ void Level::Init() {
 						Enemy* e = new Enemy;
 						e->Init(&c1Def, this);
 						e->SetDir(0);
+						e->SetMoves(0);
 						p_agents.push_back(e);
 						e = nullptr;
 					}
@@ -138,11 +139,22 @@ void Level::Init() {
 						c2Def.drawDims = glm::vec2(1.6f, 1.8f);
 						Enemy* e1 = new Enemy;
 						e1->Init(&c2Def, this);
+						e1->SetMoves(0);
 						e1->SetDir(1);
 						p_agents.push_back(e1);
 						e1 = nullptr;
 					}
 					break;
+				case 'M': {
+					CapsuleDef c3Def(p_world, b2Vec2(j + xOffset, i + yOffset), b2Vec2(0.8f, 1.8f), 1.0f, 0.1f);
+					c3Def.drawDims = glm::vec2(1.6f, 1.8f);
+					Enemy* e2 = new Enemy;
+					e2->Init(&c3Def, this);
+					e2->SetDir(1);
+					e2->SetMoves(1);
+					p_agents.push_back(e2);
+					e2 = nullptr;
+				}
 			}
 		}
 	}
@@ -168,17 +180,17 @@ void Level::SpawnBoxGroup(Box* boxes, int& boxesPos, b2Vec2 & position, b2Vec2 &
 
 bool Level::NextGroundBoxExists(const b2Vec2& pos, bool dir) {
 	if (dir) {
-		if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS] == 'O')
+		if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS + dir] == 'O')
 			return true;
-		else if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS] == 'W')
+		else if (p_levelData[pos.y - yOffset][pos.x - xOffset + SBOX_DIMS + dir] == 'W')
 			return true;
 		else
 			return false;
 	}
 	else {
-		if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS] == 'O')
+		if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS - dir] == 'O')
 			return true;
-		else if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS] == 'W')
+		else if (p_levelData[pos.y - yOffset][pos.x - xOffset - SBOX_DIMS - dir] == 'W')
 			return true;
 		else
 			return false;
@@ -288,6 +300,8 @@ int Level::Update(Angine::InputManager& inputManager) {
 		if(!p_player)
 			return -1;
 	}
+	if (p_player->GetPosition().y < 0.0f + yOffset)
+		p_player = nullptr;
 	if (p_player)
 		return false || (!GetEnemiesLeft());
 }

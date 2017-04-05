@@ -1,7 +1,7 @@
 #include "Header.h"
 #include <stdarg.h>
 
-#define DEBUG_RENDER
+#define NO_DEBUG_RENDER
 
 GameplayScreen::GameplayScreen(Angine::Window* window) :
 	p_window(window)
@@ -163,7 +163,10 @@ void GameplayScreen::Update() {
 		else {
 			DrawLose();
 		}
-		p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
+		if (p_levelIndex == p_levelPaths.size())
+			p_curState = Angine::ScreenState::EXIT_APPLICATION;
+		else
+			p_curState = Angine::ScreenState::CHANGE_PREVIOUS;
 		p_player = nullptr;
 		return;
 	}

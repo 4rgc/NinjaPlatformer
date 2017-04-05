@@ -15,6 +15,7 @@ void Enemy::Init(CapsuleDef* def, Level* thisLvl) {
 	p_capsule.GetBody()->SetUserData(this);
 	p_texture.Init(texture, glm::ivec2(1, 1));
 	p_direction = 0;
+	p_moves = 0;
 	p_HP = 60;
 	p_curLvl = thisLvl;
 }
@@ -48,6 +49,15 @@ void Enemy::DrawDebug(Angine::DebugRenderer& debugRenderer) {
 }
 
 void Enemy::Update(Player*& player, std::vector<Agent*>& agents) {
+	const float MAX_SPEED = 3.0f;
+	if(p_moves)
+		Move();
+	if (p_capsule.GetBody()->GetLinearVelocity().x < -MAX_SPEED) {
+		p_capsule.GetBody()->SetLinearVelocity(b2Vec2(-MAX_SPEED, p_capsule.GetBody()->GetLinearVelocity().y));
+	}
+	else if (p_capsule.GetBody()->GetLinearVelocity().x > MAX_SPEED) {
+		p_capsule.GetBody()->SetLinearVelocity(b2Vec2(MAX_SPEED, p_capsule.GetBody()->GetLinearVelocity().y));
+	}
 	const float CONST_SHOOT_INTERVAL = 1000;
 	const float ENEMY_FOV = 6.0f;
 
@@ -93,4 +103,11 @@ void Enemy::Shoot() {
 	BulletDef bDef(p_capsule.GetBody()->GetWorld(), GetPosition(), p_direction, 40, 20);
 	b.Spawn(&bDef, this);
 	p_bullets.push_back(b);
+}
+
+void Enemy::Move() {
+	if (!p_curLvl->NextGroundBoxExists(b2Vec2(GetPosition().x, GetPosition().y - p_capsule.GetDims().y / 2.0f - SBOX_DIMS / 2.0f), p_direction)) {
+		p_direction = !p_direction;
+	}
+	p_capsule.GetBody()->ApplyForceToCenter(b2Vec2((p_direction?60.0f:-60.0f), 0.0f), 1);
 }

@@ -3,7 +3,8 @@
 class Enemy :public Agent {
 	b2Timer p_lastShot;
 	std::vector<Bullet> p_bullets;
-	//void Move(); TO BE IMPLEMENTED
+	bool p_moves;
+	void Move();
 	void Shoot();
 public:
 	Enemy();
@@ -17,5 +18,6 @@ public:
 	void Update(Player*& player, std::vector<Agent*>& agents);
 
 	void SetDir(bool dir) { p_direction = dir; }
+	void SetMoves(bool moves) { p_moves = moves; }
 };
 
