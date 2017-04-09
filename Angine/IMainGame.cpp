@@ -47,7 +47,7 @@ bool IMainGame::Init(int screenWidth, int screenHeight, WindowFlags flags) {
 }
 
 bool IMainGame::InitSystems(int screenWidth, int screenHeight, WindowFlags flags) {
-	p_window.Create("default_name", screenWidth, screenHeight, flags);
+	p_window.Create("Game", screenWidth, screenHeight, flags);
 	return true;
 }
 
