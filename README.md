@@ -1,5 +1,5 @@
 # NinjaPlatformer
-This is a 2D platformer  project for my STEP academy C++ course graduation. (works in progress)
+This is a 2D platformer  project for my C++ course graduation.
 <br /><br />
 I was using Visual Studio 2017 Community, so this project is set to v141 Build tools, platform 10.0.10586.0.<br />
 All code inside Angine and NinjaPlatformer I wrote *myself*.<br />
